@@ -1,0 +1,12 @@
+package com.example.v_ruchd.capstonestage2.listener;
+
+import android.view.View;
+
+/**
+ * Created by v-ruchd on 3/17/2017.
+ */
+
+public interface OnBrowseContentItemClickListener {
+
+    public void onClick(View view);
+}
