@@ -15,13 +15,13 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/fragment_browse_content"
         android:name="com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:tag="newsarticletag"
 
-    tools:layout="@android:layout/list_content"
- />
-    </LinearLayout>
+        tools:layout="@android:layout/list_content" />
+</LinearLayout>

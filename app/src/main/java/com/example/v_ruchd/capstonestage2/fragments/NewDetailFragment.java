@@ -9,8 +9,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 
-import com.example.v_ruchd.capstonestage2.BrowsedContentActivity;
 import com.example.v_ruchd.capstonestage2.NewsDetailActivity;
 import com.example.v_ruchd.capstonestage2.R;
 
@@ -21,7 +21,7 @@ import com.example.v_ruchd.capstonestage2.R;
  * to handle interaction events.
  */
 public class NewDetailFragment extends Fragment {
-
+private WebView webView;
     private OnFragmentInteractionListener mListener;
     private Activity mActivity;
 
@@ -60,6 +60,7 @@ public class NewDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mActivity=getActivity();
         ((NewsDetailActivity) mActivity).setActionBarTitle(getString(R.string.news_info));
+        webView=(WebView)mActivity.findViewById(R.id.web_view);
     }
 
     @Override

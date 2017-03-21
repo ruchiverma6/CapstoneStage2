@@ -2,10 +2,14 @@ package com.example.v_ruchd.capstonestage2.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +21,7 @@ import android.view.ViewGroup;
 import com.example.v_ruchd.capstonestage2.BrowsedContentActivity;
 import com.example.v_ruchd.capstonestage2.R;
 import com.example.v_ruchd.capstonestage2.adapters.BrowsedContentAdapter;
+import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
 
 /**
@@ -27,10 +32,11 @@ import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListe
  * Use the {@link BrowsedContentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BrowsedContentFragment extends Fragment implements OnBrowseContentItemClickListener {
+public class BrowsedContentFragment extends Fragment implements OnBrowseContentItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 
     private static final String TAG = BrowsedContentFragment.class.getSimpleName();
+    private static final int NEWS_LOADER = 0;
     private RecyclerView mRecyclerView;
     private BrowsedContentAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -116,7 +122,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new BrowsedContentAdapter(dataSets);
+        mAdapter = new BrowsedContentAdapter(mActivity,dataSets);
         mAdapter.setRecylerViewItemListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -152,6 +158,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ((BrowsedContentActivity) mActivity).setActionBarTitle(getString(R.string.browsed_content));
+        getLoaderManager().initLoader(NEWS_LOADER, null, this);
     }
 
     @Override
@@ -166,6 +173,26 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
 
         ((OnFragmentInteractionListener) getActivity())
                 .onFragmentInteraction(null);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Uri uri= NewsContract.ArticleEntry.buildNewsArticleWithChannel("daily-mail");
+        return new CursorLoader(mActivity,uri,null,null,null,null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.swapCursor(null);
+    }
+
+    public void onDataRetrieved() {
+        getLoaderManager().restartLoader(NEWS_LOADER,null,this);
     }
 
     /**

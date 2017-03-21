@@ -1,22 +1,21 @@
 package com.example.v_ruchd.capstonestage2;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.data.NewsDebHelper;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
+import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
 import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
@@ -37,7 +36,6 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +44,7 @@ import retrofit2.Response;
 public class BrowsedContentActivity extends AppCompatActivity implements BrowsedContentFragment.OnFragmentInteractionListener {
     private static final String TAG = BrowsedContentActivity.class.getSimpleName();
     private static final String DETAILFRAGMENT_TAG = "detailfragment";
+    private static final String ARTICLEFRAGMENTTAG = "newsarticletag";
     private boolean mTwoPane;
     private Context mContext;
     /**
@@ -111,9 +110,18 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
                 List<Sources> sources = Arrays.asList(response.body().getSources());
 
                 Log.d(TAG, "Number of movies received: " + sources.size());
+                DataSaverTask saverTask = new DataSaverTask(mContext, response.body());
+                saverTask.setDataSaveListener(new DataSaveListener() {
+                    @Override
+                    public void onDataSave() {
+                        Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
+                        if (null != browseContentFragment && browseContentFragment instanceof BrowsedContentFragment) {
+                            ((BrowsedContentFragment) browseContentFragment).onDataRetrieved();
+                        }
+                    }
+                });
+                saverTask.execute();
 
-                new DataSaverTask(mContext, response.body()).execute();
-                // saveDatainDb(sources);
 
             }
 
@@ -123,40 +131,6 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
                 Log.e(TAG, t.toString());
             }
         });
-    }
-
-    private void saveDatainDb(List<Sources> sources) {
-        Vector<ContentValues> contentValuesVector = new Vector<>(sources.size());
-        Vector<ContentValues> contentValuesVectorCategoryType = new Vector<>(sources.size());
-        for (Sources resultData : sources) {
-            ContentValues contentValuesMovies = new ContentValues();
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID, resultData.getId());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_NAME, resultData.getName());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_DESCRIPTION, resultData.getDescription());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL, resultData.getUrl());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL_TO_LOGOS, resultData.getUrlsToLogos().getMedium());
-
-            contentValuesVector.add(contentValuesMovies);
-
-            ContentValues contentValuesCategoryType = new ContentValues();
-            contentValuesCategoryType.put(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE, resultData.getCategory());
-            contentValuesCategoryType.put(NewsContract.CategoryEntry.COLUMN_NEWSCHANNEL_KEY, resultData.getId());
-
-            contentValuesVectorCategoryType.add(contentValuesCategoryType);
-
-        }
-        if (contentValuesVector.size() > 0) {
-            ContentValues[] contentValuesArray = contentValuesVector.toArray(new ContentValues[contentValuesVector.size()]);
-            getContentResolver().bulkInsert(NewsContract.NewsChannelEntry.CONTENT_URI, contentValuesArray);
-        }
-
-        if (contentValuesVectorCategoryType.size() > 0) {
-            ContentValues[] contentValuesArray = contentValuesVectorCategoryType.toArray(new ContentValues[contentValuesVectorCategoryType.size()]);
-            getContentResolver().bulkInsert(NewsContract.CategoryEntry.CONTENT_URI, contentValuesArray);
-        }
-        Cursor cursor = getContentResolver().query(NewsContract.NewsChannelEntry.buildNewsChannelWithCategory("sport"), null, null, null, null);
-        cursor.getCount();
-
     }
 
 
@@ -225,23 +199,23 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
 
     public void copyDBToSDCard() {
         try {
-            String DATABASE_NAME="news";///data/data/com.example.v_ruchd.capstonestage2/databases/news.db
-            InputStream myInput = new FileInputStream("/data/data/com.example.v_ruchd.capstonestage2/databases/"+DATABASE_NAME);
+            String DATABASE_NAME = "news";///data/data/com.example.v_ruchd.capstonestage2/databases/news.db
+            InputStream myInput = new FileInputStream("/data/data/com.example.v_ruchd.capstonestage2/databases/" + DATABASE_NAME);
 
-            File file = new File(Environment.getExternalStorageDirectory().getPath()+"/"+DATABASE_NAME);
-            if (!file.exists()){
+            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" + DATABASE_NAME);
+            if (!file.exists()) {
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
-                    Log.i("FO","File creation failed for " + file);
+                    Log.i("FO", "File creation failed for " + file);
                 }
             }
 
-            OutputStream myOutput = new FileOutputStream(Environment.getExternalStorageDirectory().getPath()+"/"+DATABASE_NAME);
+            OutputStream myOutput = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/" + DATABASE_NAME);
 
             byte[] buffer = new byte[1024];
             int length;
-            while ((length = myInput.read(buffer))>0){
+            while ((length = myInput.read(buffer)) > 0) {
                 myOutput.write(buffer, 0, length);
             }
 
@@ -249,10 +223,10 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
             myOutput.flush();
             myOutput.close();
             myInput.close();
-            Log.i("FO","copied");
+            Log.i("FO", "copied");
 
         } catch (Exception e) {
-            Log.i("FO","exception="+e);
+            Log.i("FO", "exception=" + e);
         }
 
 
@@ -264,7 +238,7 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
             File data = Environment.getDataDirectory();
 
             if (sd.canWrite()) {
-                String currentDBPath = "//data//"+getPackageName()+"//databases//"+databaseName+".db";
+                String currentDBPath = "//data//" + getPackageName() + "//databases//" + databaseName + ".db";
                 String backupDBPath = "backupnamenews.db";
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
@@ -275,13 +249,12 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
-                }   
+                }
             }
         } catch (Exception e) {
 
         }
     }
-
 
 
     /**
@@ -320,6 +293,8 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         client.disconnect();
     }
 }
+
+
 
 
 

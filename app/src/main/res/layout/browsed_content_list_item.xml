@@ -8,11 +8,12 @@
 
     <TextView
         android:id="@+id/news_title_text_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_margin="10dp"
-        android:text="Item1" />
+        android:layout_marginLeft="10dp"
+android:layout_marginRight="2dp"
+        android:text="Item1fgfgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg" />
 
 
     <ImageView android:id="@+id/news_image_logo"
@@ -20,5 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="10dp"
         android:src="@drawable/ic_launcher"/>
 </LinearLayout>

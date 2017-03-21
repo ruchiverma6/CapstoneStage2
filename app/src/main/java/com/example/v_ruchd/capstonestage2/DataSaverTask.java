@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
+import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.Data;
 import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
@@ -25,17 +26,30 @@ public class DataSaverTask extends AsyncTask<Void,Void,Void> {
 
     private final Data resultData;
     private final Context mContext;
+    private DataSaveListener dataSaveListener;
 
     public DataSaverTask(Context context,Data resultData){
-    this.resultData=resultData;
+      this.resultData=resultData;
         this.mContext=context;
 }
+
+    public void setDataSaveListener(DataSaveListener dataSaveListener){
+        this.dataSaveListener=dataSaveListener;
+    }
     @Override
     protected Void doInBackground(Void... params) {
         saveDataInDb();
         return null;
     }
 
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        if(null!=dataSaveListener){
+            dataSaveListener.onDataSave();
+        }
+    }
 
     private void saveDataInDb(){
         if( resultData instanceof NewsChannelResponse){
