@@ -1,6 +1,7 @@
 package com.example.v_ruchd.capstonestage2;
 
 import android.content.Intent;
+<<<<<<< HEAD
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+=======
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+>>>>>>> ea793c6b36fbf917d87552a45c3ac9546d88ab2f
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+<<<<<<< HEAD
 import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
@@ -39,6 +45,14 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     private ChatAdapter adapter;
     private ArrayList<ChatMessage> chatHistory;
     private LinearLayoutManager mLayoutManager;
+=======
+import com.example.v_ruchd.capstonestage2.adapters.ChatListAdapter;
+
+public class HomeActivity extends AppCompatActivity {
+private RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private ChatListAdapter mAdapter;
+>>>>>>> ea793c6b36fbf917d87552a45c3ac9546d88ab2f
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +63,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void initComponents() {
+<<<<<<< HEAD
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
         mLayoutManager = new LinearLayoutManager(this);
         //   mLayoutManager.setReverseLayout(true);
@@ -85,6 +100,18 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
 
+=======
+        mRecyclerView=(RecyclerView)findViewById(R.id.recyler_view);
+
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new ChatListAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+>>>>>>> ea793c6b36fbf917d87552a45c3ac9546d88ab2f
     }
 
     /***
