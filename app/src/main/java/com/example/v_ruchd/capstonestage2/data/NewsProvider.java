@@ -23,6 +23,7 @@ public class NewsProvider extends ContentProvider {
 
     static final int NEWSARTICLES = 103;
     static final int NEWSARTICLES_WITH_SOURCECHANNELS=104;
+    static final int MESSAGES = 105;
     private NewsDebHelper mOpenHelper;
 
     /*static final int MOVIE_WITH_SORT_BY_ID = 102;
@@ -52,6 +53,7 @@ public class NewsProvider extends ContentProvider {
 
         matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES,NEWSARTICLES);
         matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES+ "/*",NEWSARTICLES_WITH_SOURCECHANNELS);
+        matcher.addURI(authority, NewsContract.PATH_MESSAGES, MESSAGES);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_SORT_BY);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_SORT_BY_ID);
 //        matcher.addURI(authority, MovieContract.PATH_TRAILERS, TRAILERS);
@@ -132,6 +134,19 @@ public class NewsProvider extends ContentProvider {
                 break;
             }
 
+            case MESSAGES: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        NewsContract.MessageEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -180,7 +195,17 @@ public class NewsProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             }
+            case MESSAGES: {
 
+                long _id = db.insert(NewsContract.MessageEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = NewsContract.MessageEntry.buildMessageUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+
+
+            }
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -291,6 +316,28 @@ public class NewsProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return Count;
             }
+
+
+            case MESSAGES:
+                db.beginTransaction();
+                int count = 0;
+                try {
+                    for (ContentValues value : values) {
+
+                        long _id = db.insert(NewsContract.MessageEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            count++;
+                        }
+                    }
+
+
+
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return count;
 
 
             default:

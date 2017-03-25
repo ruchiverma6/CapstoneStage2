@@ -64,14 +64,19 @@ public class NewsDebHelper extends SQLiteOpenHelper {
 
 
 
-
+        final String SQL_CREATE_MESSAGE_TABLE = "CREATE TABLE " + NewsContract.MessageEntry.TABLE_NAME + " (" +
+                NewsContract.MessageEntry._ID + " INTEGER PRIMARY KEY," +  NewsContract.MessageEntry.COLUMN_MESSAGE_ID+ " INTEGER UNIQUE NOT NULL, " +
+                NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT + " TEXT NOT NULL, " +
+                NewsContract.MessageEntry.COLUMN_DATE + " TEXT NOT NULL, " +
+                NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE + " INTEGER NOT NULL, " +
+                " UNIQUE (" + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + ") ON CONFLICT REPLACE);";
 
 
         sqLiteDatabase.execSQL(SQL_CREATE_NEWSCHANNEL_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_CATEGORY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ARTICLES_TABLE);
-
-Log.v(TAG,sqLiteDatabase.getPath());
+        sqLiteDatabase.execSQL(SQL_CREATE_MESSAGE_TABLE);
+         Log.v(TAG,sqLiteDatabase.getPath());
     }
 
     @Override
@@ -79,6 +84,7 @@ Log.v(TAG,sqLiteDatabase.getPath());
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.NewsChannelEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.CategoryEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.ArticleEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.MessageEntry.TABLE_NAME);
 
         onCreate(sqLiteDatabase);
     }

@@ -8,6 +8,8 @@ import android.os.AsyncTask;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
+import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
+import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
 import com.example.v_ruchd.capstonestage2.modal.Data;
 import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
 import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
@@ -67,7 +69,37 @@ public class DataSaverTask extends AsyncTask<Void,Void,Void> {
             saveArticles(articles,sourceId);
         }
 
+
+        else if( resultData instanceof ChatMessageResponse){
+         //   String sourceId=((ChatMessageResponse) resultData).getChat;
+            List<ChatMessage> chatMessages= Arrays.asList(((ChatMessageResponse) resultData).getChatMessages());
+            saveMessages(chatMessages);
+        }
+
         Cursor cursor= mContext.getContentResolver().query(NewsContract.ArticleEntry.buildNewsArticleWithChannel("daily-mail"),null,null,null,null);
+        cursor.getCount();
+    }
+
+    private void saveMessages(List<ChatMessage> chatMessages) {
+        Vector<ContentValues> contentValuesVector = new Vector<>(chatMessages.size());
+
+        for (ChatMessage resultData : chatMessages) {
+            ContentValues contentValuesMovies = new ContentValues();
+            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID, resultData.getId());
+            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT, resultData.getMessage());
+            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_DATE, resultData.getDate());
+            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE, resultData.getType());
+            contentValuesVector.add(contentValuesMovies);
+
+
+
+        }
+        if (contentValuesVector.size() > 0) {
+            ContentValues[] contentValuesArray = contentValuesVector.toArray(new ContentValues[contentValuesVector.size()]);
+            mContext.getContentResolver().bulkInsert(NewsContract.MessageEntry.CONTENT_URI, contentValuesArray);
+        }
+
+        Cursor cursor= mContext.getContentResolver().query(NewsContract.MessageEntry.CONTENT_URI,null,null,null,null);
         cursor.getCount();
     }
 
