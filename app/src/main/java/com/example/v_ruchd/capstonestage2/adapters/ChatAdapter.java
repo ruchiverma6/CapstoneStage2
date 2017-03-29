@@ -323,7 +323,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
         switch (viewType) {
             case Constants.INPUT_CATEGORY_TYPE:
                 Toast.makeText(context, "clicked item position " + position, Toast.LENGTH_LONG).show();
-                ((HomeActivity) context).onCategoryelection(saelectedData);
+                ((HomeActivity) context).onCategoryelection(selectedData);
 
                 break;
 
