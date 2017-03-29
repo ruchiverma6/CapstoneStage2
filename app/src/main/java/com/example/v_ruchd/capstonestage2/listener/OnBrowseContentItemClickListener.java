@@ -1,5 +1,6 @@
 package com.example.v_ruchd.capstonestage2.listener;
 
+import android.os.Bundle;
 import android.view.View;
 
 /**
@@ -8,5 +9,5 @@ import android.view.View;
 
 public interface OnBrowseContentItemClickListener {
 
-    public void onClick(View view);
+    public void onClick(View view,int position,Bundle result);
 }

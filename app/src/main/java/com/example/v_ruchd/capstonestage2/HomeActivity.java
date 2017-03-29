@@ -30,6 +30,7 @@ import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
+import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
 
@@ -177,12 +178,12 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         chatHistory.add(msg6);
 
 
-        ChatMessage msg7 = new ChatMessage();
+      /*  ChatMessage msg7 = new ChatMessage();
         msg7.setId(7);
         msg7.setMessageType(3);
         msg7.setMessage("How r u doing???");
         msg7.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-        chatHistory.add(msg7);
+        chatHistory.add(msg7);*/
 
         adapter = new ChatAdapter(HomeActivity.this, new ArrayList<ChatMessage>());
         messagesContainer.setAdapter(adapter);
@@ -243,5 +244,43 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onDataSave() {
         getSupportLoaderManager().restartLoader(0,null,this);
+    }
+
+    public void onCategoryelection(String selectedData) {
+        Utils.fetchNewsChannelsResponse(this, selectedData,new DataUpdateListener(){
+
+            @Override
+            public void onDataRetrieved() {
+
+                ChatMessage msg7 = new ChatMessage();
+                msg7.setId(7);
+                msg7.setMessageType(3);
+                msg7.setMessage("How r u doing???");
+                msg7.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+                //chatHistory.add(msg7);
+                ChatMessageResponse chatMessageResponse=new ChatMessageResponse();
+                chatMessageResponse.setChatMessages(new ChatMessage[]{msg7});
+
+
+        /*for(int i=0; i<chatHistory.size(); i++) {
+            ChatMessage message = chatHistory.get(i);
+            displayMessage(message);
+        }
+
+
+*/
+
+
+
+
+               Utils.saveChatMessages(HomeActivity.this,chatMessageResponse,HomeActivity.this);
+
+            }
+
+            @Override
+            public void onDataError(String message) {
+
+            }
+        });
     }
 }

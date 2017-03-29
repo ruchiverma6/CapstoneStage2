@@ -7,7 +7,7 @@
 >
 
     <ImageView
-        android:id="@+id/horizontal_item_text"
+        android:id="@+id/channel_logo_imageview"
         android:src="@drawable/logo_sample"
         android:layout_width="180dp"
         android:padding="15dp"

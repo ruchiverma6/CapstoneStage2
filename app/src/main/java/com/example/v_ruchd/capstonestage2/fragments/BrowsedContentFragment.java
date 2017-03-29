@@ -168,7 +168,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view,int position,Bundle bundle) {
         Log.v(TAG, ""+mRecyclerView.getChildAdapterPosition(view));
 
         ((OnFragmentInteractionListener) getActivity())

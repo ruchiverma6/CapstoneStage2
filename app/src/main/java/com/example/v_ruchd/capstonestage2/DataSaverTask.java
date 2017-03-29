@@ -82,7 +82,10 @@ public class DataSaverTask extends AsyncTask<Void,Void,Void> {
 
     private void saveMessages(List<ChatMessage> chatMessages) {
         Vector<ContentValues> contentValuesVector = new Vector<>(chatMessages.size());
+      //  Cursor cursor= mContext.getContentResolver().query(NewsContract.MessageEntry.CONTENT_URI,null,null,null,null);
+     //   cursor.getCount();
 
+       // int totalMessageCount=
         for (ChatMessage resultData : chatMessages) {
             ContentValues contentValuesMovies = new ContentValues();
             contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID, resultData.getId());

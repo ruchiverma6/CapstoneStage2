@@ -122,6 +122,19 @@ public class NewsProvider extends ContentProvider {
                 );
                 break;
             }
+
+            case CATEGORY: {
+
+                retCursor = mOpenHelper.getReadableDatabase().query(true,
+                        NewsContract.CategoryEntry.TABLE_NAME,
+                        new String[]{NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE},
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,null,null
+                );
+                break;
+            }
             // "sortby"
             case NEWSCHANNELS_WITH_CATEGORY: {
                 retCursor = getNewsChannelsForNewsCategory(uri, projection, sortOrder);

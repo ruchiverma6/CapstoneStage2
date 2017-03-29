@@ -1,12 +1,21 @@
 package com.example.v_ruchd.capstonestage2.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.R;
+import com.example.v_ruchd.capstonestage2.data.NewsContract;
+import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.LongSummaryStatistics;
 
 /**
  * Created by v-ruchd on 3/24/2017.
@@ -16,32 +25,81 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
 
 
     private final LayoutInflater mLayoutInflater;
+    private final Context context;
+    private Cursor cursor;
+    private OnBrowseContentItemClickListener onBrowseContentItemClickListener;
 
-    public NewsChannelResultAdapter(Context context){
-        mLayoutInflater= LayoutInflater.from(context);
+    public NewsChannelResultAdapter(Context context) {
+        mLayoutInflater = LayoutInflater.from(context);
+        this.context = context;
+    }
+
+    public void setRecyclerViewListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener) {
+        this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
+    }
+
+
+    public void swapCursor(final Cursor cursor) {
+        this.cursor = cursor;
+        this.notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemCount() {
+        return this.cursor != null
+                ? this.cursor.getCount()
+                : 0;
+    }
+
+    public Cursor getItem(final int position) {
+        if (this.cursor != null && !this.cursor.isClosed()) {
+            this.cursor.moveToPosition(position);
+        }
+
+        return this.cursor;
     }
 
     @Override
     public NewsChannelResultAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View viewItem=mLayoutInflater.inflate(R.layout.newchannel_result_item,null);
-        ViewHolder viewHolder=new ViewHolder(viewItem);
+        View viewItem = mLayoutInflater.inflate(R.layout.newchannel_result_item, null);
+        ViewHolder viewHolder = new ViewHolder(viewItem);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(NewsChannelResultAdapter.ViewHolder holder, int position) {
+        cursor = getItem(position);
 
+        String logoUrl = cursor.getString(cursor.getColumnIndex(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL_TO_LOGOS));
+        Picasso.with(context).load(logoUrl).into(holder.mChannelLogo);
     }
 
-    @Override
-    public int getItemCount() {
-        return 10;
-    }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        public ImageView mChannelLogo;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            mChannelLogo = (ImageView) itemView.findViewById(R.id.channel_logo_imageview);
+            mChannelLogo.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            cursor = getItem(position);
+
+            String logoUrl = cursor.getString(cursor.getColumnIndex(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL_TO_LOGOS));
+
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("viewtype", Constants.NEWCHANNELREULT_CATEGORY_TYPE);
+            bundle.putString("selecteddata",logoUrl);
+            if (null != onBrowseContentItemClickListener) {
+                onBrowseContentItemClickListener.onClick(v,position, bundle);
+            }
         }
     }
 }
+

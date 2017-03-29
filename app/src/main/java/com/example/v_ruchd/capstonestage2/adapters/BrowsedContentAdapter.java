@@ -2,6 +2,7 @@ package com.example.v_ruchd.capstonestage2.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,7 +100,8 @@ public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAd
 
         @Override
         public void onClick(View v) {
-            onBrowseContentItemClickListener.onClick(v);
+            Bundle bundle=new Bundle();
+            onBrowseContentItemClickListener.onClick(v,0,bundle);
         }
     }
 }

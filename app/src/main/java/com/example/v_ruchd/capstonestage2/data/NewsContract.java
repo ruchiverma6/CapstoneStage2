@@ -128,8 +128,27 @@ public class NewsContract {
         public static final String TABLE_NAME = "messages";
         public static final String COLUMN_MESSAGE_ID="id";
         public static final String COLUMN_MESSAGE_CONTENT = "messagecontent";
+        public static final String COLUMN_MESSAGE_FROM = "from";
         public static final String COLUMN_DATE = "date";
         public static final String COLUMN_MESSAGE_TYPE = "type";
+
+        public static Uri buildMessageUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+
+
+    public static final class MessageCategorySelectionEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MESSAGES).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGES;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGES;
+        // Table name
+        public static final String TABLE_NAME = "messagescategories";
+        public static final String COLUMN_MESSAGE_ID="id";
+        public static final String COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE = "selectedcategorytype";
 
         public static Uri buildMessageUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
