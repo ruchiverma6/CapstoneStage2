@@ -24,6 +24,9 @@ public class NewsProvider extends ContentProvider {
     static final int NEWSARTICLES = 103;
     static final int NEWSARTICLES_WITH_SOURCECHANNELS=104;
     static final int MESSAGES = 105;
+    static final int MESSAGESCATEGORYINPUTSELECTION = 106;
+    static final int MESSAGESTOTALLENGTH = 107;
+    static final int MESSAGESTOTALLENGTHPERUSER = 108;
     private NewsDebHelper mOpenHelper;
 
     /*static final int MOVIE_WITH_SORT_BY_ID = 102;
@@ -34,7 +37,7 @@ public class NewsProvider extends ContentProvider {
     static final int SORTBY = 300;*/
 
     private static final String selectionMovieWithSortBy = NewsContract.ArticleEntry.TABLE_NAME + "." + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + " = ? ";
-
+    private static final String selectionTotalLengthPerUser = NewsContract.TotalMessageLengthEntry.TABLE_NAME + "." + NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM + " = ? ";
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
@@ -54,6 +57,9 @@ public class NewsProvider extends ContentProvider {
         matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES,NEWSARTICLES);
         matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES+ "/*",NEWSARTICLES_WITH_SOURCECHANNELS);
         matcher.addURI(authority, NewsContract.PATH_MESSAGES, MESSAGES);
+        matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE, MESSAGESCATEGORYINPUTSELECTION);
+        matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH, MESSAGESTOTALLENGTH);
+        matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH+ "/*", MESSAGESTOTALLENGTHPERUSER);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_SORT_BY);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_SORT_BY_ID);
 //        matcher.addURI(authority, MovieContract.PATH_TRAILERS, TRAILERS);
@@ -160,6 +166,36 @@ public class NewsProvider extends ContentProvider {
                 break;
             }
 
+
+            case MESSAGESCATEGORYINPUTSELECTION: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        NewsContract.MessageEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
+
+
+            case MESSAGESTOTALLENGTHPERUSER: {
+                String sortBy = uri.getPathSegments().get(1);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        NewsContract.TotalMessageLengthEntry.TABLE_NAME,
+                        projection,
+                        selectionTotalLengthPerUser,
+                        new String[]{sortBy},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -217,8 +253,28 @@ public class NewsProvider extends ContentProvider {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
 
-
             }
+
+            case MESSAGESCATEGORYINPUTSELECTION: {
+                long _id = db.insert(NewsContract.MessageCategorySelectionEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = NewsContract.MessageEntry.buildMessageUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+
+
+
+            case MESSAGESTOTALLENGTH: {
+                long _id = db.insert(NewsContract.TotalMessageLengthEntry.TABLE_NAME, null, values);
+                if (_id > 0)
+                    returnUri = NewsContract.MessageEntry.buildMessageUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -351,6 +407,49 @@ public class NewsProvider extends ContentProvider {
                 }
                 getContext().getContentResolver().notifyChange(uri, null);
                 return count;
+
+            case MESSAGESCATEGORYINPUTSELECTION:
+                db.beginTransaction();
+                int countMessageCategorySelection = 0;
+                try {
+                    for (ContentValues value : values) {
+
+                        long _id = db.insert(NewsContract.MessageCategorySelectionEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            countMessageCategorySelection++;
+                        }
+                    }
+
+
+
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return countMessageCategorySelection;
+
+
+            case MESSAGESTOTALLENGTH:
+                db.beginTransaction();
+                int totalMessageLength = 0;
+                try {
+                    for (ContentValues value : values) {
+
+                        long _id = db.insert(NewsContract.TotalMessageLengthEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            totalMessageLength++;
+                        }
+                    }
+
+
+
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return totalMessageLength;
 
 
             default:

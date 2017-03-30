@@ -1,19 +1,13 @@
 package com.example.v_ruchd.capstonestage2;
 
 import android.content.Intent;
-
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -25,10 +19,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-
 import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
@@ -84,7 +76,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 chatMessage.setMessage(messageText);
                 chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
                 chatMessage.setMessageType(1);
-
+                chatMessage.setFrom("user");
                 messageET.setText("");
 
                 //displayMessage(chatMessage);
@@ -145,36 +137,42 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         msg.setMessageType(0);
         msg.setMessage("Hi");
         msg.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        msg.setFrom("user");
         chatHistory.add(msg);
         ChatMessage msg1 = new ChatMessage();
         msg1.setId(2);
         msg1.setMessageType(0);
         msg1.setMessage("How r u doing???");
         msg1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        msg1.setFrom("user");
         chatHistory.add(msg1);
         ChatMessage msg3 = new ChatMessage();
         msg3.setId(3);
         msg3.setMessageType(1);
         msg3.setMessage("Hi");
         msg3.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        msg3.setFrom("bot");
         chatHistory.add(msg3);
         ChatMessage msg4 = new ChatMessage();
         msg4.setId(4);
         msg4.setMessageType(1);
         msg4.setMessage("How r u doing???");
         msg4.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        msg4.setFrom("user");
         chatHistory.add(msg4);
         ChatMessage msg5 = new ChatMessage();
         msg5.setId(5);
         msg5.setMessageType(1);
         msg5.setMessage("Hi");
         msg5.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        msg5.setFrom("user");
         chatHistory.add(msg5);
         ChatMessage msg6 = new ChatMessage();
         msg6.setId(6);
         msg6.setMessageType(2);
         msg6.setMessage("How r u doing???");
         msg6.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+        msg6.setFrom("bot");
         chatHistory.add(msg6);
 
 
@@ -246,7 +244,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().restartLoader(0,null,this);
     }
 
-    public void onCategoryelection(String selectedData) {
+    public void onCategoryelection(final String selectedData) {
         Utils.fetchNewsChannelsResponse(this, selectedData,new DataUpdateListener(){
 
             @Override
@@ -255,8 +253,9 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 ChatMessage msg7 = new ChatMessage();
                 msg7.setId(7);
                 msg7.setMessageType(3);
-                msg7.setMessage("How r u doing???");
+                msg7.setMessage("inputcategory:"+selectedData);
                 msg7.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+                msg7.setFrom("bot");
                 //chatHistory.add(msg7);
                 ChatMessageResponse chatMessageResponse=new ChatMessageResponse();
                 chatMessageResponse.setChatMessages(new ChatMessage[]{msg7});

@@ -10,7 +10,7 @@ import android.util.Log;
  */
 
 public class NewsDebHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION=1;
+    private static final int DATABASE_VERSION=2;
 
     private static final String DATABASE_NAME="news.db";
     private static final String TAG = NewsDebHelper.class.getSimpleName();
@@ -60,7 +60,8 @@ public class NewsDebHelper extends SQLiteOpenHelper {
                 NewsContract.ArticleEntry.COLUMN_PUBLISHEDAT + " TEXT NOT NULL,  " +
 
                 " FOREIGN KEY (" + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + ") REFERENCES " +
-                NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID + ") )";
+                NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID + ") , " + " UNIQUE (" + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID +", "+ NewsContract.ArticleEntry.COLUMN_TITLE+ ") ON CONFLICT REPLACE);";
+
 
 
 
@@ -73,8 +74,9 @@ public class NewsDebHelper extends SQLiteOpenHelper {
                 NewsContract.MessageEntry._ID + " INTEGER PRIMARY KEY," +  NewsContract.MessageEntry.COLUMN_MESSAGE_ID+ " INTEGER UNIQUE NOT NULL, " +
                 NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT + " TEXT NOT NULL, " +
                 NewsContract.MessageEntry.COLUMN_DATE + " TEXT NOT NULL, " +
-                NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE + " TEXT NOT NULL, " +
+                NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE + " TEXT NOT NULL, " +  NewsContract.MessageEntry.COLUMN_MESSAGE_FROM + " TEXT NOT NULL, " +
                 " UNIQUE (" + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + ") ON CONFLICT REPLACE);";
+
 
 
 
@@ -84,7 +86,16 @@ public class NewsDebHelper extends SQLiteOpenHelper {
                 NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE + " TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID + ") REFERENCES " +
-                NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + ") )";
+                NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + "), " + " UNIQUE (" + NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID + ") ON CONFLICT REPLACE);";
+
+
+        final String SQL_CREATE_TOTALMESSAGE_LENGTH_TABLE = "CREATE TABLE " + NewsContract.TotalMessageLengthEntry.TABLE_NAME + " (" +
+                NewsContract.TotalMessageLengthEntry._ID + " INTEGER PRIMARY KEY," +  NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM+ " TEXT UNIQUE NOT NULL, " +
+                NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_TOTAL_LENGTH + " INTEGER NOT NULL, " +
+                " UNIQUE (" + NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM + ") ON CONFLICT REPLACE);";
+
+
+
 
 
         sqLiteDatabase.execSQL(SQL_CREATE_NEWSCHANNEL_TABLE);
@@ -92,7 +103,8 @@ public class NewsDebHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_ARTICLES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_MESSAGE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_MESSAGE_CATEGORY_SELECTION_TABLE);
-         Log.v(TAG,sqLiteDatabase.getPath());
+        sqLiteDatabase.execSQL(SQL_CREATE_TOTALMESSAGE_LENGTH_TABLE);
+        Log.v(TAG,sqLiteDatabase.getPath());
     }
 
     @Override

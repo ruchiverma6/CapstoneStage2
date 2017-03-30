@@ -9,7 +9,7 @@ public class ChatMessage {
     private String message;
     private Long userId;
     private String dateTime;
-
+    private String from;
     public long getId() {
         return id;
     }
@@ -48,5 +48,13 @@ public class ChatMessage {
 
     public void setDate(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 }

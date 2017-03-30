@@ -22,7 +22,8 @@ public class NewsContract {
 
     public static final String PATH_NEWSARTICLES = "newsarticles";
     public static final String PATH_MESSAGES = "messages";
-
+    public static final String PATH_CATEGORY_SELECTION_TYPE = "messagescategoryselected";
+    public static final String PATH_MESSAGESLENGTH = "messageslength";
     public static final class NewsChannelEntry implements BaseColumns {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_NEWSCHANNEL).build();
         public static final String CONTENT_TYPE =
@@ -128,7 +129,7 @@ public class NewsContract {
         public static final String TABLE_NAME = "messages";
         public static final String COLUMN_MESSAGE_ID="id";
         public static final String COLUMN_MESSAGE_CONTENT = "messagecontent";
-        public static final String COLUMN_MESSAGE_FROM = "from";
+        public static final String COLUMN_MESSAGE_FROM = "messagefrom";
         public static final String COLUMN_DATE = "date";
         public static final String COLUMN_MESSAGE_TYPE = "type";
 
@@ -140,11 +141,11 @@ public class NewsContract {
 
 
     public static final class MessageCategorySelectionEntry implements BaseColumns {
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MESSAGES).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CATEGORY_SELECTION_TYPE).build();
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGES;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CATEGORY_SELECTION_TYPE;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGES;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CATEGORY_SELECTION_TYPE;
         // Table name
         public static final String TABLE_NAME = "messagescategories";
         public static final String COLUMN_MESSAGE_ID="id";
@@ -153,5 +154,27 @@ public class NewsContract {
         public static Uri buildMessageUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+    }
+
+    public static class TotalMessageLengthEntry implements BaseColumns {
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MESSAGESLENGTH).build();
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGESLENGTH;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGESLENGTH;
+        // Table name
+        public static final String TABLE_NAME = "messagetotallengthtable";
+        public static final String COLUMN_MESSAGE_ID="id";
+        public static final String COLUMN_MESSAGE_TOTAL_LENGTH = "messagetotallength";
+        public static final String COLUMN_MESSAGE_FROM = "messagefrom";
+
+        public static Uri buildMessageUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildTotalMessageLengthPerUser(String userType) {
+            return CONTENT_URI.buildUpon().appendPath(userType).build();
+        }
+
     }
 }
