@@ -74,6 +74,10 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
         Picasso.with(context).load(logoUrl).into(holder.mChannelLogo);
     }
 
+    public void setSelectedCategory(String selectedCategory) {
+
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -95,9 +99,9 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
 
             Bundle bundle = new Bundle();
             bundle.putInt("viewtype", Constants.NEWCHANNELREULT_CATEGORY_TYPE);
-            bundle.putString("selecteddata",logoUrl);
+            bundle.putString("selecteddata", logoUrl);
             if (null != onBrowseContentItemClickListener) {
-                onBrowseContentItemClickListener.onClick(v,position, bundle);
+                onBrowseContentItemClickListener.onClick(v, position, bundle);
             }
         }
     }

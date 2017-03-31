@@ -2,6 +2,7 @@ package com.example.v_ruchd.capstonestage2.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -153,6 +154,10 @@ public class NewsContract {
 
         public static Uri buildMessageUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildselectedCategoryForMessage(String messageID) {
+            return CONTENT_URI.buildUpon().appendPath(messageID).build();
         }
     }
 

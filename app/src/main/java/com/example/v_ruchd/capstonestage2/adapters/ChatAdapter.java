@@ -149,6 +149,9 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 break;
 
             case TYPE_NEWS_CHANNELS_RESULT:
+                //  String selectedCategory;
+
+
                 NewsChannelResultViewHolder channelResultViewHolder = (NewsChannelResultViewHolder) viewHolder;
 
                 channelResultViewHolder.mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
@@ -274,7 +277,13 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 return new CursorLoader(context, uri, null, null, null, null);
 
             case NEWSCHANNELRESPONSE_LOADER:
-                Uri channelResponseUri = NewsContract.NewsChannelEntry.buildNewsChannelWithCategory("sport");
+               String messageId= cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                String selectedCategory = "";
+                Cursor selectedCategoryCursor = context.getContentResolver().query(NewsContract.MessageCategorySelectionEntry.buildselectedCategoryForMessage(messageId), null, null, null, null);
+                if (selectedCategoryCursor.moveToFirst()) {
+                    selectedCategory = selectedCategoryCursor.getString(cursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
+                }
+                Uri channelResponseUri = NewsContract.NewsChannelEntry.buildNewsChannelWithCategory(selectedCategory);
 
                 return new CursorLoader(context, channelResponseUri, null, null, null, null);
 
