@@ -8,8 +8,10 @@ import android.util.Log;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
+import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
 import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
+import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
 import com.example.v_ruchd.capstonestage2.modal.Sources;
 import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiClient;
 import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiInterface;
@@ -50,7 +52,7 @@ public class Utils {
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
-        Call<NewsChannelResponse> callChannels = apiService.getNewsChannelsByCategory(Constants.API_KEY, "entertainment");
+        Call<NewsChannelResponse> callChannels = apiService.getNewsChannelsByCategory(Constants.API_KEY, selectedData);
         callChannels.enqueue(new Callback<NewsChannelResponse>() {
             @Override
             public void onResponse(Call<NewsChannelResponse> call, Response<NewsChannelResponse> response) {
@@ -87,5 +89,39 @@ public class Utils {
         DataSaverTask saverTask = new DataSaverTask(context, chatMessageResponse);
         saverTask.setDataSaveListener(dataSaveListener);
         saverTask.execute();
+    }
+
+    public static void fetchArticleResponse(final Context context, String selectedData,final DataUpdateListener dataUpdateListener) {
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+
+        Call<NewsResponse> call = apiService.getNewsResponseByChannel(selectedData, Constants.API_KEY);
+        call.enqueue(new Callback<NewsResponse>() {
+            @Override
+            public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
+                List<Articles> movies = Arrays.asList(response.body().getArticles());
+                Log.d(TAG, "Number of movies received: " + movies.size());
+                DataSaverTask saverTask = new DataSaverTask(context, response.body());
+                saverTask.setDataSaveListener(new DataSaveListener() {
+                    @Override
+                    public void onDataSave() {
+                        if (null != dataUpdateListener) {
+                            dataUpdateListener.onDataRetrieved();
+                        }
+
+                    }
+                });
+                saverTask.execute();
+            }
+
+            @Override
+            public void onFailure(Call<NewsResponse> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+                if (null != dataUpdateListener) {
+                    dataUpdateListener.onDataError(t.getMessage());
+                }
+            }
+        });
     }
 }

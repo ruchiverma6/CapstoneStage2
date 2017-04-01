@@ -15,7 +15,7 @@ import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
 import com.squareup.picasso.Picasso;
 
-import java.util.LongSummaryStatistics;
+
 
 /**
  * Created by v-ruchd on 3/24/2017.
@@ -94,12 +94,12 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
             int position = getAdapterPosition();
             cursor = getItem(position);
 
-            String logoUrl = cursor.getString(cursor.getColumnIndex(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL_TO_LOGOS));
+            String selectedChannel = cursor.getString(cursor.getColumnIndex(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID));
 
 
             Bundle bundle = new Bundle();
             bundle.putInt("viewtype", Constants.NEWCHANNELREULT_CATEGORY_TYPE);
-            bundle.putString("selecteddata", logoUrl);
+            bundle.putString("selecteddata", selectedChannel);
             if (null != onBrowseContentItemClickListener) {
                 onBrowseContentItemClickListener.onClick(v, position, bundle);
             }

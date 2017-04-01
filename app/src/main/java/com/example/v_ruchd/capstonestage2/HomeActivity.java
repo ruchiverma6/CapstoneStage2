@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,21 +24,33 @@ import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
+import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
+import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
+import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiClient;
+import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiInterface;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,DataSaveListener{
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, DataSaveListener {
     private static final int MESSAGE_LOADER = 1;
+    private static final String TAG = HomeActivity.class.getSimpleName();
     private EditText messageET;
     private RecyclerView messagesContainer;
     private Button sendBtn;
     private ChatAdapter adapter;
     private ArrayList<ChatMessage> chatHistory;
     private LinearLayoutManager mLayoutManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,11 +69,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         messageET = (EditText) findViewById(R.id.messageEdit);
         sendBtn = (Button) findViewById(R.id.chatSendButton);
 
-       // TextView meLabel = (TextView) findViewById(R.id.meLbl);
-       // TextView companionLabel = (TextView) findViewById(R.id.friendLabel);
+        // TextView meLabel = (TextView) findViewById(R.id.meLbl);
+        // TextView companionLabel = (TextView) findViewById(R.id.friendLabel);
         RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
-      //  companionLabel.setText("My Buddy");
-        getSupportLoaderManager().initLoader(MESSAGE_LOADER,null,this);
+        //  companionLabel.setText("My Buddy");
+        getSupportLoaderManager().initLoader(MESSAGE_LOADER, null, this);
         loadDummyHistory();
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +97,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         });
 
 
-
     }
 
     /***
@@ -99,19 +111,18 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home,menu);
+        getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.clear_menu_item:
                 return true;
             case R.id.browsed_content_menu_item:
                 showBrowsedContentScreen();
                 return true;
-
 
 
             default:
@@ -121,14 +132,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-
     private void showBrowsedContentScreen() {
-        Intent browsedContentActivityintent=new Intent(this,BrowsedContentActivity.class);
+        Intent browsedContentActivityintent = new Intent(this, BrowsedContentActivity.class);
         startActivity(browsedContentActivityintent);
     }
 
 
-    private void loadDummyHistory(){
+    private void loadDummyHistory() {
 
         chatHistory = new ArrayList<ChatMessage>();
 
@@ -188,7 +198,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
         ChatMessage[] array = new ChatMessage[chatHistory.size()];
         chatHistory.toArray(array);
-        ChatMessageResponse chatMessageResponse=new ChatMessageResponse();
+        ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
         chatMessageResponse.setChatMessages(array);
 
 
@@ -201,7 +211,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 */
 
 
-
         DataSaverTask saverTask = new DataSaverTask(this, chatMessageResponse);
         saverTask.setDataSaveListener(this);
         saverTask.execute();
@@ -212,8 +221,8 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri= NewsContract.MessageEntry.CONTENT_URI;
-        return new CursorLoader(this,uri,null,null,null,null);
+        Uri uri = NewsContract.MessageEntry.CONTENT_URI;
+        return new CursorLoader(this, uri, null, null, null, null);
     }
 
     @Override
@@ -241,11 +250,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onDataSave() {
-        getSupportLoaderManager().restartLoader(0,null,this);
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
     public void onCategoryelection(final String selectedData) {
-        Utils.fetchNewsChannelsResponse(this, selectedData,new DataUpdateListener(){
+        Utils.fetchNewsChannelsResponse(this, selectedData, new DataUpdateListener() {
 
             @Override
             public void onDataRetrieved() {
@@ -253,11 +262,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 ChatMessage msg7 = new ChatMessage();
                 msg7.setId(7);
                 msg7.setMessageType(3);
-                msg7.setMessage("inputcategory:"+selectedData);
+                msg7.setMessage("inputcategory:" + selectedData);
                 msg7.setDate(DateFormat.getDateTimeInstance().format(new Date()));
                 msg7.setFrom("bot");
                 //chatHistory.add(msg7);
-                ChatMessageResponse chatMessageResponse=new ChatMessageResponse();
+                ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
                 chatMessageResponse.setChatMessages(new ChatMessage[]{msg7});
 
 
@@ -270,9 +279,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 */
 
 
-
-
-               Utils.saveChatMessages(HomeActivity.this,chatMessageResponse,HomeActivity.this);
+                Utils.saveChatMessages(HomeActivity.this, chatMessageResponse, HomeActivity.this);
 
             }
 
@@ -282,4 +289,14 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
     }
+
+    public void onChannelection(String selectedData) {
+
+        Intent intent = new Intent(HomeActivity.this, BrowsedContentActivity.class);
+        intent.putExtra("selectedchannel",selectedData);
+        startActivity(intent);
+    }
+
+
 }
+

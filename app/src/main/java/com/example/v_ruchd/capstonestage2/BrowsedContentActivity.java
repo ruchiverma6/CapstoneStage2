@@ -16,6 +16,7 @@ import com.example.v_ruchd.capstonestage2.data.NewsDebHelper;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
+import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
 import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
@@ -52,12 +53,14 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private String selectedChannel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        selectedChannel = getIntent().getStringExtra("selectedchannel");
         setContentView(R.layout.activity_browsed_content);
         setUpActionBar();
         if (findViewById(R.id.news_detail_container) != null) {
@@ -80,55 +83,18 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     @Override
     protected void onResume() {
         super.onResume();
-        NewsDebHelper newsDebHelper = new NewsDebHelper(this);
-
-        // newsDebHelper.getWritableDatabase().insert(NewsContract.NewsChannelEntry.TABLE_NAME,null,null);
-        ApiInterface apiService =
-                ApiClient.getClient().create(ApiInterface.class);
-
-        Call<NewsResponse> call = apiService.getNewsResponseByChannel("daily-mail", Constants.API_KEY);
-        call.enqueue(new Callback<NewsResponse>() {
+        Utils.fetchArticleResponse(this, selectedChannel, new DataUpdateListener() {
             @Override
-            public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
-                List<Articles> movies = Arrays.asList(response.body().getArticles());
-                Log.d(TAG, "Number of movies received: " + movies.size());
-                new DataSaverTask(mContext, response.body()).execute();
+            public void onDataRetrieved() {
+                Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
+                if (null != browseContentFragment && browseContentFragment instanceof BrowsedContentFragment) {
+                    ((BrowsedContentFragment) browseContentFragment).onDataRetrieved(selectedChannel);
+                }
             }
 
             @Override
-            public void onFailure(Call<NewsResponse> call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
-            }
-        });
+            public void onDataError(String message) {
 
-
-        Call<NewsChannelResponse> callChannels = apiService.getNewsChannelsByCategory(Constants.API_KEY, "entertainment");
-        callChannels.enqueue(new Callback<NewsChannelResponse>() {
-            @Override
-            public void onResponse(Call<NewsChannelResponse> call, Response<NewsChannelResponse> response) {
-                List<Sources> sources = Arrays.asList(response.body().getSources());
-
-                Log.d(TAG, "Number of movies received: " + sources.size());
-                DataSaverTask saverTask = new DataSaverTask(mContext, response.body());
-                saverTask.setDataSaveListener(new DataSaveListener() {
-                    @Override
-                    public void onDataSave() {
-                        Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
-                        if (null != browseContentFragment && browseContentFragment instanceof BrowsedContentFragment) {
-                            ((BrowsedContentFragment) browseContentFragment).onDataRetrieved();
-                        }
-                    }
-                });
-                saverTask.execute();
-
-
-            }
-
-            @Override
-            public void onFailure(Call<NewsChannelResponse> call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
             }
         });
     }
@@ -141,7 +107,7 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         ActionBar ab = getSupportActionBar();
-
+    
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
     }

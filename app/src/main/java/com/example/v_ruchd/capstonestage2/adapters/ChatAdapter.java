@@ -99,7 +99,13 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
             case TYPE_INPUT_SELETION_RESULT:
                 View inputSelectionViewHolder = inflater.inflate(R.layout.chat_inputselection_layout, parent, false);
                 viewHolder = new InputSelectiomMessageViewHolder(inputSelectionViewHolder);
-                ((HomeActivity) context).getSupportLoaderManager().initLoader(INPUTSELECTION_LOADER, null, this);
+                // InputSelectiomMessageViewHolder inputSelectiomMessageViewHolder = (InputSelectiomMessageViewHolder) viewHolder;
+             /*   RecyclerView.LayoutParams layoutParams=(RecyclerView.LayoutParams) inputSelectiomMessageViewHolder.mRecyclerView.getLayoutParams();
+                layoutParams.width= RecyclerView.LayoutParams.WRAP_CONTENT;
+                layoutParams.height=150;
+                inputSelectiomMessageViewHolder.mRecyclerView.setLayoutParams(layoutParams);*/
+
+                //  ((HomeActivity) context).getSupportLoaderManager().initLoader(INPUTSELECTION_LOADER, null, this);
                 break;
 
             case TYPE_NEWS_CHANNELS_RESULT:
@@ -112,6 +118,19 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 break;
         }
         return viewHolder;
+    }
+
+    public class InputSelectiomMessageViewHolder extends RecyclerView.ViewHolder {
+        public RecyclerView mRecyclerView;
+
+        public InputSelectiomMessageViewHolder(View itemView) {
+            super(itemView);
+            mRecyclerView = (RecyclerView) itemView.findViewById(R.id.horizontal_list);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            //inputSelectiomMessageViewHolder.mRecyclerView.setNestedScrollingEnabled(false);
+            mRecyclerView.setAdapter(mInputSelectionAdapter);
+           // mRecyclerView.setLayoutFrozen(true);
+        }
     }
 
     @Override
@@ -137,15 +156,8 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 break;
 
             case TYPE_INPUT_SELETION_RESULT:
-                InputSelectiomMessageViewHolder inputSelectiomMessageViewHolder = (InputSelectiomMessageViewHolder) viewHolder;
-             /*   RecyclerView.LayoutParams layoutParams=(RecyclerView.LayoutParams) inputSelectiomMessageViewHolder.mRecyclerView.getLayoutParams();
-                layoutParams.width= RecyclerView.LayoutParams.WRAP_CONTENT;
-                layoutParams.height=150;
-                inputSelectiomMessageViewHolder.mRecyclerView.setLayoutParams(layoutParams);*/
-                inputSelectiomMessageViewHolder.mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-
-                inputSelectiomMessageViewHolder.mRecyclerView.setAdapter(mInputSelectionAdapter);
-                inputSelectiomMessageViewHolder.mRecyclerView.setLayoutFrozen(true);
+                mInputSelectionAdapter.setData(context.getResources().getStringArray(R.array.inputcategoryselectionenteries));
+                mInputSelectionAdapter.notifyDataSetChanged();
                 break;
 
             case TYPE_NEWS_CHANNELS_RESULT:
@@ -271,17 +283,17 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
-            case INPUTSELECTION_LOADER:
+           /* case INPUTSELECTION_LOADER:
                 Uri uri = NewsContract.CategoryEntry.CONTENT_URI;
 
-                return new CursorLoader(context, uri, null, null, null, null);
+                return new CursorLoader(context, uri, null, null, null, null);*/
 
             case NEWSCHANNELRESPONSE_LOADER:
-               String messageId= cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
                 String selectedCategory = "";
                 Cursor selectedCategoryCursor = context.getContentResolver().query(NewsContract.MessageCategorySelectionEntry.buildselectedCategoryForMessage(messageId), null, null, null, null);
                 if (selectedCategoryCursor.moveToFirst()) {
-                    selectedCategory = selectedCategoryCursor.getString(cursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
+                    selectedCategory = selectedCategoryCursor.getString(selectedCategoryCursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
                 }
                 Uri channelResponseUri = NewsContract.NewsChannelEntry.buildNewsChannelWithCategory(selectedCategory);
 
@@ -295,9 +307,9 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
-            case INPUTSELECTION_LOADER:
-                mInputSelectionAdapter.swapCursor(data);
-                break;
+            /*case INPUTSELECTION_LOADER:
+               // mInputSelectionAdapter.swapCursor(data);
+                break;*/
             case NEWSCHANNELRESPONSE_LOADER:
                 mChannelResponseAdapter.swapCursor(data);
                 break;
@@ -309,9 +321,9 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         switch (loader.getId()) {
-            case INPUTSELECTION_LOADER:
+            /*case INPUTSELECTION_LOADER:
                 mInputSelectionAdapter.swapCursor(null);
-                break;
+                break;*/
             case NEWSCHANNELRESPONSE_LOADER:
                 mChannelResponseAdapter.swapCursor(null);
                 break;
@@ -338,7 +350,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
             case Constants.NEWCHANNELREULT_CATEGORY_TYPE:
                 Toast.makeText(context, "clicked item position " + position, Toast.LENGTH_LONG).show();
-
+                ((HomeActivity) context).onChannelection(selectedData);
                 break;
             default:
                 break;

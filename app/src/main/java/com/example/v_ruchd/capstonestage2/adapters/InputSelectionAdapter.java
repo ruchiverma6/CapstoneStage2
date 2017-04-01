@@ -23,13 +23,14 @@ import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListe
 
 public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAdapter.ViewHolder> {
 
-
+    private String[] mInpuSelectionEnteries;
     private final LayoutInflater mLayoutInflater;
-    private Cursor cursor;
+    //private Cursor cursor;
     private OnBrowseContentItemClickListener onBrowseContentItemClickListener;
 
     public InputSelectionAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
+        mInpuSelectionEnteries = context.getResources().getStringArray(R.array.inputcategoryselectionenteries);
     }
 
     public void setRecyclerViewListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener) {
@@ -51,21 +52,26 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
 
     @Override
     public void onBindViewHolder(InputSelectionAdapter.ViewHolder holder, int position) {
-        cursor = getItem(position);
-        String categoryType = cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
+       // cursor = getItem(position);
+        String categoryType =mInpuSelectionEnteries[position]; //cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
         holder.mCategoryBtn.setText(categoryType);
 
     }
 
+    public void setData(String[] stringArray) {
+        this.mInpuSelectionEnteries=stringArray;
+        notifyDataSetChanged();
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private RelativeLayout mLinearLayout;
+    //    private RelativeLayout mLinearLayout;
         public Button mCategoryBtn;
 
         public ViewHolder(View itemView) {
 
             super(itemView);
-            mLinearLayout = (RelativeLayout) itemView.findViewById(R.id.layout_parent);
+           // mLinearLayout = (RelativeLayout) itemView.findViewById(R.id.layout_parent);
             mCategoryBtn = (Button) itemView.findViewById(R.id.category_item_btn);
             mCategoryBtn.setOnClickListener(this);
 
@@ -75,34 +81,39 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            cursor = getItem(position);
-            String categoryType = cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
+          //  cursor = getItem(position);
+            String categoryType = mInpuSelectionEnteries[position];//cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
             Bundle bundle = new Bundle();
             bundle.putInt("viewtype", Constants.INPUT_CATEGORY_TYPE);
-            bundle.putString("selecteddata",categoryType);
+            bundle.putString("selecteddata", categoryType);
             if (null != onBrowseContentItemClickListener) {
                 onBrowseContentItemClickListener.onClick(v, position, bundle);
             }
         }
     }
 
-    public void swapCursor(final Cursor cursor) {
-        this.cursor = cursor;
-        this.notifyDataSetChanged();
-    }
+    //public void swapCursor(final Cursor cursor) {
+        //this.cursor = cursor;
+       // this.notifyDataSetChanged();
+  //  }
 
     @Override
     public int getItemCount() {
-        return this.cursor != null
-                ? this.cursor.getCount()
-                : 0;
+        return mInpuSelectionEnteries.length;
+      //  return this.cursor != null
+          //      ? this.cursor.getCount()
+          //      : 0;
     }
 
-    public Cursor getItem(final int position) {
-        if (this.cursor != null && !this.cursor.isClosed()) {
+    public String getItem(final int position) {
+        if(null!=mInpuSelectionEnteries && mInpuSelectionEnteries.length>0){
+          return mInpuSelectionEnteries[position];
+        }
+        return null;
+       /* if (this.cursor != null && !this.cursor.isClosed()) {
             this.cursor.moveToPosition(position);
         }
 
-        return this.cursor;
+        return this.cursor;*/
     }
 }

@@ -41,8 +41,8 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     private BrowsedContentAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String[] dataSets = new String[13];
-    
-    
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,6 +54,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
 
     private OnFragmentInteractionListener mListener;
     private Activity mActivity;
+    private String selectedChannel;
 
     public BrowsedContentFragment() {
         // Required empty public constructor
@@ -80,7 +81,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity=getActivity();
+        mActivity = getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -92,7 +93,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_browsed_content, container, false);
+        View view = inflater.inflate(R.layout.fragment_browsed_content, container, false);
 
         dataSets[0] = "Item1";
         dataSets[1] = "Item2";
@@ -122,17 +123,13 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new BrowsedContentAdapter(mActivity,dataSets);
+        mAdapter = new BrowsedContentAdapter(mActivity, dataSets);
         mAdapter.setRecylerViewItemListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
 
-
-
         return view;
     }
-
-
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -168,8 +165,8 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     }
 
     @Override
-    public void onClick(View view,int position,Bundle bundle) {
-        Log.v(TAG, ""+mRecyclerView.getChildAdapterPosition(view));
+    public void onClick(View view, int position, Bundle bundle) {
+        Log.v(TAG, "" + mRecyclerView.getChildAdapterPosition(view));
 
         ((OnFragmentInteractionListener) getActivity())
                 .onFragmentInteraction(null);
@@ -177,8 +174,8 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri= NewsContract.ArticleEntry.buildNewsArticleWithChannel("daily-mail");
-        return new CursorLoader(mActivity,uri,null,null,null,null);
+        Uri uri = NewsContract.ArticleEntry.buildNewsArticleWithChannel(selectedChannel);
+        return new CursorLoader(mActivity, uri, null, null, null, null);
     }
 
     @Override
@@ -191,8 +188,9 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
         mAdapter.swapCursor(null);
     }
 
-    public void onDataRetrieved() {
-        getLoaderManager().restartLoader(NEWS_LOADER,null,this);
+    public void onDataRetrieved(String selectedChannel) {
+        this.selectedChannel=selectedChannel;
+        getLoaderManager().restartLoader(NEWS_LOADER, null, this);
     }
 
     /**

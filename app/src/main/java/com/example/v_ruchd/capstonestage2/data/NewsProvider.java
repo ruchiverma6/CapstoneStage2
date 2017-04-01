@@ -22,11 +22,12 @@ public class NewsProvider extends ContentProvider {
     static final int NEWSCHANNELS_WITH_CATEGORY = 102;
 
     static final int NEWSARTICLES = 103;
-    static final int NEWSARTICLES_WITH_SOURCECHANNELS=104;
+    static final int NEWSARTICLES_WITH_SOURCECHANNELS = 104;
     static final int MESSAGES = 105;
     static final int MESSAGESCATEGORYINPUTSELECTION = 106;
     static final int MESSAGESTOTALLENGTH = 107;
     static final int MESSAGESTOTALLENGTHPERUSER = 108;
+    private static final int CATEGORYINPUTSELECTIONMESSAGEID = 109;
     private NewsDebHelper mOpenHelper;
 
     /*static final int MOVIE_WITH_SORT_BY_ID = 102;
@@ -38,6 +39,8 @@ public class NewsProvider extends ContentProvider {
 
     private static final String selectionMovieWithSortBy = NewsContract.ArticleEntry.TABLE_NAME + "." + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + " = ? ";
     private static final String selectionTotalLengthPerUser = NewsContract.TotalMessageLengthEntry.TABLE_NAME + "." + NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM + " = ? ";
+    private static final String selectionCategoryForMessage = NewsContract.MessageCategorySelectionEntry.TABLE_NAME + "." + NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID + " = ? ";
+
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
         // expressions instead?  Because you're not crazy, that's why.
@@ -54,12 +57,13 @@ public class NewsProvider extends ContentProvider {
         matcher.addURI(authority, NewsContract.PATH_NEWSCHANNEL + "/*", NEWSCHANNELS_WITH_CATEGORY);
         //  matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/#", WEATHER_WITH_LOCATION_AND_DATE);
 
-        matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES,NEWSARTICLES);
-        matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES+ "/*",NEWSARTICLES_WITH_SOURCECHANNELS);
+        matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES, NEWSARTICLES);
+        matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES + "/*", NEWSARTICLES_WITH_SOURCECHANNELS);
         matcher.addURI(authority, NewsContract.PATH_MESSAGES, MESSAGES);
         matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE, MESSAGESCATEGORYINPUTSELECTION);
         matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH, MESSAGESTOTALLENGTH);
-        matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH+ "/*", MESSAGESTOTALLENGTHPERUSER);
+        matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH + "/*", MESSAGESTOTALLENGTHPERUSER);
+        matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE+ "/*", CATEGORYINPUTSELECTIONMESSAGEID);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_SORT_BY);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_SORT_BY_ID);
 //        matcher.addURI(authority, MovieContract.PATH_TRAILERS, TRAILERS);
@@ -72,6 +76,7 @@ public class NewsProvider extends ContentProvider {
 
     private static final SQLiteQueryBuilder sNewsArticleForNewsChannelByQueryBuilder;
     private static final SQLiteQueryBuilder sNewsChannelsForNewsCategoryQueryBuilder;
+
     static {
         sNewsArticleForNewsChannelByQueryBuilder = new SQLiteQueryBuilder();
         sNewsChannelsForNewsCategoryQueryBuilder = new SQLiteQueryBuilder();
@@ -87,7 +92,6 @@ public class NewsProvider extends ContentProvider {
                         "." + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID);
 
 
-
         sNewsChannelsForNewsCategoryQueryBuilder.setTables(
                 NewsContract.NewsChannelEntry.TABLE_NAME + " INNER JOIN " +
                         NewsContract.CategoryEntry.TABLE_NAME +
@@ -96,9 +100,6 @@ public class NewsProvider extends ContentProvider {
                         " = " + NewsContract.CategoryEntry.TABLE_NAME +
                         "." + NewsContract.CategoryEntry.COLUMN_NEWSCHANNEL_KEY);
     }
-
-
-
 
 
     @Override
@@ -137,7 +138,7 @@ public class NewsProvider extends ContentProvider {
                         selection,
                         selectionArgs,
                         null,
-                        null,null,null
+                        null, null, null
                 );
                 break;
             }
@@ -181,13 +182,27 @@ public class NewsProvider extends ContentProvider {
             }
 
 
-
             case MESSAGESTOTALLENGTHPERUSER: {
                 String sortBy = uri.getPathSegments().get(1);
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         NewsContract.TotalMessageLengthEntry.TABLE_NAME,
                         projection,
                         selectionTotalLengthPerUser,
+                        new String[]{sortBy},
+                        null,
+                        null,
+                        sortOrder
+                );
+                break;
+            }
+
+
+            case CATEGORYINPUTSELECTIONMESSAGEID: {
+                String sortBy = uri.getPathSegments().get(1);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        NewsContract.MessageCategorySelectionEntry.TABLE_NAME,
+                        new String[]{NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE},
+                        selectionCategoryForMessage,
                         new String[]{sortBy},
                         null,
                         null,
@@ -265,7 +280,6 @@ public class NewsProvider extends ContentProvider {
             }
 
 
-
             case MESSAGESTOTALLENGTH: {
                 long _id = db.insert(NewsContract.TotalMessageLengthEntry.TABLE_NAME, null, values);
                 if (_id > 0)
@@ -300,7 +314,7 @@ public class NewsProvider extends ContentProvider {
         return sNewsArticleForNewsChannelByQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selectionMovieWithSortBy,
-               new String[]{ sortBy},
+                new String[]{sortBy},
                 null,
                 null,
                 sortOrder
@@ -337,7 +351,6 @@ public class NewsProvider extends ContentProvider {
                             returnCount++;
                         }
                     }
-
 
 
                     db.setTransactionSuccessful();
@@ -400,7 +413,6 @@ public class NewsProvider extends ContentProvider {
                     }
 
 
-
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
@@ -419,7 +431,6 @@ public class NewsProvider extends ContentProvider {
                             countMessageCategorySelection++;
                         }
                     }
-
 
 
                     db.setTransactionSuccessful();
@@ -443,7 +454,6 @@ public class NewsProvider extends ContentProvider {
                     }
 
 
-
                     db.setTransactionSuccessful();
                 } finally {
                     db.endTransaction();
@@ -456,12 +466,6 @@ public class NewsProvider extends ContentProvider {
                 return super.bulkInsert(uri, values);
         }
     }
-
-
-
-
-
-
 
 
 }

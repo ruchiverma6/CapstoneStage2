@@ -7,4 +7,15 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="news_info">News Info</string>
+    <string-array name="inputcategoryselectionenteries" >
+        <item>Entertainment</item>
+        <item>Business</item>
+        <item>Gaming</item>
+        <item>General</item>
+        <item>Music</item>
+        <item>Politics</item>
+        <item>"Science-and-nature</item>
+        <item>Sport</item>
+        <item>Technology</item>
+    </string-array>
 </resources>
