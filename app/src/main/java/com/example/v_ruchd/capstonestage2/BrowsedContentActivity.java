@@ -107,7 +107,7 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         ActionBar ab = getSupportActionBar();
-    
+
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
     }

@@ -24,6 +24,8 @@ import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
+import com.example.v_ruchd.capstonestage2.luis.LuisDataUpdateListener;
+import com.example.v_ruchd.capstonestage2.luis.LuisHandler;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
@@ -62,6 +64,9 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     private void initComponents() {
 
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
+        adapter = new ChatAdapter(HomeActivity.this, new ArrayList<ChatMessage>());
+        messagesContainer.setAdapter(adapter);
+
         mLayoutManager = new LinearLayoutManager(this);
         //   mLayoutManager.setReverseLayout(true);
         mLayoutManager.setStackFromEnd(true);
@@ -74,7 +79,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
         //  companionLabel.setText("My Buddy");
         getSupportLoaderManager().initLoader(MESSAGE_LOADER, null, this);
-        loadDummyHistory();
+       // loadDummyHistory();
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +88,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 if (TextUtils.isEmpty(messageText)) {
                     return;
                 }
-
+                processentMessageFromUser(messageText);
                 ChatMessage chatMessage = new ChatMessage();
                 chatMessage.setId(122);//dummy
                 chatMessage.setMessage(messageText);
@@ -91,12 +96,69 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 chatMessage.setMessageType(1);
                 chatMessage.setFrom("user");
                 messageET.setText("");
+                ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
+                chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
 
-                //displayMessage(chatMessage);
+
+        /*for(int i=0; i<chatHistory.size(); i++) {
+            ChatMessage message = chatHistory.get(i);
+            displayMessage(message);
+        }
+
+
+*/
+
+
+                DataSaverTask saverTask = new DataSaverTask(HomeActivity.this, chatMessageResponse);
+                saverTask.setDataSaveListener(new DataSaveListener() {
+                    @Override
+                    public void onDataSave() {
+                        getSupportLoaderManager().restartLoader(MESSAGE_LOADER, null, HomeActivity.this);
+                    }
+                });
+                saverTask.execute();
             }
         });
 
 
+    }
+
+    private void processentMessageFromUser(final String messageText) {
+        LuisHandler luisHandler = new LuisHandler(this);
+        luisHandler.sendMessageToLuis(messageText, new LuisDataUpdateListener() {
+            @Override
+            public void onLuisDataUpdate(String messageComtent, int messageType) {
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.setId(122);//dummy
+                chatMessage.setMessage(messageComtent);
+                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+                chatMessage.setMessageType(messageType);
+                chatMessage.setFrom("bot");
+
+
+                ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
+                chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
+
+
+        /*for(int i=0; i<chatHistory.size(); i++) {
+            ChatMessage message = chatHistory.get(i);
+            displayMessage(message);
+        }
+
+
+*/
+
+
+                DataSaverTask saverTask = new DataSaverTask(HomeActivity.this, chatMessageResponse);
+                saverTask.setDataSaveListener(new DataSaveListener() {
+                    @Override
+                    public void onDataSave() {
+                        getSupportLoaderManager().restartLoader(MESSAGE_LOADER, null, HomeActivity.this);
+                    }
+                });
+                saverTask.execute();
+            }
+        });
     }
 
     /***
@@ -293,7 +355,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onChannelection(String selectedData) {
 
         Intent intent = new Intent(HomeActivity.this, BrowsedContentActivity.class);
-        intent.putExtra("selectedchannel",selectedData);
+        intent.putExtra("selectedchannel", selectedData);
         startActivity(intent);
     }
 

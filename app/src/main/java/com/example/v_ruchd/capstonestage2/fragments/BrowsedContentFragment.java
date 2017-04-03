@@ -167,6 +167,10 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     @Override
     public void onClick(View view, int position, Bundle bundle) {
         Log.v(TAG, "" + mRecyclerView.getChildAdapterPosition(view));
+        String sourceUrl = bundle.getString("sourceurl");
+
+
+
 
         ((OnFragmentInteractionListener) getActivity())
                 .onFragmentInteraction(null);
@@ -189,7 +193,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     }
 
     public void onDataRetrieved(String selectedChannel) {
-        this.selectedChannel=selectedChannel;
+        this.selectedChannel = selectedChannel;
         getLoaderManager().restartLoader(NEWS_LOADER, null, this);
     }
 

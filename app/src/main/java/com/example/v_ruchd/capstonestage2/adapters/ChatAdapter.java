@@ -35,10 +35,10 @@ import java.util.List;
 
 
 public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.LoaderCallbacks<Cursor>, OnBrowseContentItemClickListener {
-    private static final int TYPE_BOT = 0;
-    private static final int TYPE_USER = 1;
-    private static final int TYPE_INPUT_SELETION_RESULT = 2;
-    private static final int TYPE_NEWS_CHANNELS_RESULT = 3;
+    public static final int TYPE_BOT = 0;
+    public static final int TYPE_USER = 1;
+    public static final int TYPE_INPUT_SELETION_RESULT = 2;
+    public static final int TYPE_NEWS_CHANNELS_RESULT = 3;
     private static final int INPUTSELECTION_LOADER = 101;
     private static final int NEWSCHANNELRESPONSE_LOADER = 102;
     private final NewsChannelResultAdapter mChannelResponseAdapter;
@@ -111,6 +111,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
             case TYPE_NEWS_CHANNELS_RESULT:
                 View newChannelResultViewHolder = inflater.inflate(R.layout.newschannel_result_layout, parent, false);
                 viewHolder = new NewsChannelResultViewHolder(newChannelResultViewHolder);
+
                 ((HomeActivity) context).getSupportLoaderManager().initLoader(NEWSCHANNELRESPONSE_LOADER, null, this);
                 break;
 
@@ -118,6 +119,20 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 break;
         }
         return viewHolder;
+    }
+
+
+
+    public class NewsChannelResultViewHolder extends RecyclerView.ViewHolder {
+        public RecyclerView mRecyclerView;
+
+        public NewsChannelResultViewHolder(View itemView) {
+            super(itemView);
+            mRecyclerView=(RecyclerView)itemView.findViewById(R.id.horizontal_list);
+     mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+           mRecyclerView.setAdapter(mChannelResponseAdapter);
+
+        }
     }
 
     public class InputSelectiomMessageViewHolder extends RecyclerView.ViewHolder {
@@ -164,10 +179,10 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 //  String selectedCategory;
 
 
-                NewsChannelResultViewHolder channelResultViewHolder = (NewsChannelResultViewHolder) viewHolder;
 
-                channelResultViewHolder.mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-                channelResultViewHolder.mRecyclerView.setAdapter(mChannelResponseAdapter);
+
+
+                ((HomeActivity) context).getSupportLoaderManager().restartLoader(NEWSCHANNELRESPONSE_LOADER, null, this);
                 break;
             default:
 

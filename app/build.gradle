@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.example.v_ruchd.capstonestage2"
-        minSdkVersion 13
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -33,4 +33,5 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile project(path: ':clientlibrary')
 }

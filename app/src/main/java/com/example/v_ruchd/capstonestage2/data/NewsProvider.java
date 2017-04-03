@@ -40,6 +40,7 @@ public class NewsProvider extends ContentProvider {
     private static final String selectionMovieWithSortBy = NewsContract.ArticleEntry.TABLE_NAME + "." + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + " = ? ";
     private static final String selectionTotalLengthPerUser = NewsContract.TotalMessageLengthEntry.TABLE_NAME + "." + NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM + " = ? ";
     private static final String selectionCategoryForMessage = NewsContract.MessageCategorySelectionEntry.TABLE_NAME + "." + NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID + " = ? ";
+    private static final String selectionCategoryForChannels = NewsContract.CategoryEntry.TABLE_NAME + "." + NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE + " = ? ";
 
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
@@ -63,7 +64,7 @@ public class NewsProvider extends ContentProvider {
         matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE, MESSAGESCATEGORYINPUTSELECTION);
         matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH, MESSAGESTOTALLENGTH);
         matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH + "/*", MESSAGESTOTALLENGTHPERUSER);
-        matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE+ "/*", CATEGORYINPUTSELECTIONMESSAGEID);
+        matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE + "/*", CATEGORYINPUTSELECTIONMESSAGEID);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_SORT_BY);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_SORT_BY_ID);
 //        matcher.addURI(authority, MovieContract.PATH_TRAILERS, TRAILERS);
@@ -326,8 +327,8 @@ public class NewsProvider extends ContentProvider {
 
         return sNewsChannelsForNewsCategoryQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
-                null,
-                null,
+                selectionCategoryForChannels,
+                new String[]{sortBy},
                 null,
                 null,
                 sortOrder

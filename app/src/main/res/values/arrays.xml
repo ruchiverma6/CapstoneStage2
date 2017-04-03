@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="greeting_msg_enteries" >
+        <item>Hi</item>
+        <item>Hello</item>
+        <item>what\s up</item>
+        <item>hola</item>
+        <item>Greeting</item>
+    </string-array>
+    <string-array name="newscategory_msg_enteries">
+        <item>Entertainment</item>
+
+        <item>Business</item>
+
+        <item>Gaming</item>
+        <item>General</item>
+        <item>Music</item>
+        <item>Politics</item>
+        <item>Science-and-nature</item>
+        <item>Science</item>
+        <item>nature</item>
+        <item>Sport</item>
+        <item>sports</item>
+        <item>sport</item>
+        <item>Technology</item>
+
+    </string-array>
+</resources>

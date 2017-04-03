@@ -18,4 +18,9 @@
         <item>Sport</item>
         <item>Technology</item>
     </string-array>
+
+
+    <string name="greeting_msg_from_bot">Hello I m your friendly bot. I will help you to find live news headlines.</string>
+    <string name="error_message_from_bot">I will help you to find news from below categories.</string>
+
 </resources>

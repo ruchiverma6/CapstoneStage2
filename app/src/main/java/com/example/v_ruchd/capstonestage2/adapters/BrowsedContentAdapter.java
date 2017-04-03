@@ -19,7 +19,7 @@ import com.squareup.picasso.Picasso;
  * Created by v-ruchd on 3/17/2017.
  */
 
-public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAdapter.ViewHolder>{
+public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAdapter.ViewHolder> {
 
 
     private final String[] dataSets;
@@ -27,10 +27,11 @@ public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAd
     private Cursor cursor;
     private Context mContext;
 
-    public BrowsedContentAdapter(Context context,String[] dataSets){
-        this.dataSets=dataSets;
-        this.mContext=context;
+    public BrowsedContentAdapter(Context context, String[] dataSets) {
+        this.dataSets = dataSets;
+        this.mContext = context;
     }
+
     @Override
     public BrowsedContentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browsed_content_list_item, parent, false);
@@ -48,32 +49,27 @@ public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAd
         Picasso.with(mContext).load(urlLogo).into(holder.mNewsLogoImageView);
     }
 
-    public void swapCursor(final Cursor cursor)
-    {
+    public void swapCursor(final Cursor cursor) {
         this.cursor = cursor;
         this.notifyDataSetChanged();
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return this.cursor != null
                 ? this.cursor.getCount()
                 : 0;
     }
 
-    public Cursor getItem(final int position)
-    {
-        if (this.cursor != null && !this.cursor.isClosed())
-        {
+    public Cursor getItem(final int position) {
+        if (this.cursor != null && !this.cursor.isClosed()) {
             this.cursor.moveToPosition(position);
         }
 
         return this.cursor;
     }
 
-    public Cursor getCursor()
-    {
+    public Cursor getCursor() {
         return this.cursor;
     }
 
@@ -82,26 +78,31 @@ public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAd
         return dataSets.length;
     }*/
 
-    public void setRecylerViewItemListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener){
-        this.onBrowseContentItemClickListener=onBrowseContentItemClickListener;
+    public void setRecylerViewItemListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener) {
+        this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView mTitleTextView;
         public ImageView mNewsLogoImageView;
+
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             mTitleTextView = (TextView) itemView.findViewById(R.id.news_title_text_view);
-            mNewsLogoImageView=(ImageView)itemView.findViewById(R.id.news_image_logo);
+            mNewsLogoImageView = (ImageView) itemView.findViewById(R.id.news_image_logo);
         }
 
 
         @Override
         public void onClick(View v) {
-            Bundle bundle=new Bundle();
-            onBrowseContentItemClickListener.onClick(v,0,bundle);
+            int position = getAdapterPosition();
+            cursor = getItem(position);
+           String sourceUrl=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
+            Bundle bundle = new Bundle();
+            bundle.putString("newssourceurl", sourceUrl);
+            onBrowseContentItemClickListener.onClick(v, 0, bundle);
         }
     }
 }
