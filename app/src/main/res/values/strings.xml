@@ -14,7 +14,7 @@
         <item>General</item>
         <item>Music</item>
         <item>Politics</item>
-        <item>"Science-and-nature</item>
+        <item>Science-and-nature</item>
         <item>Sport</item>
         <item>Technology</item>
     </string-array>
@@ -22,5 +22,24 @@
 
     <string name="greeting_msg_from_bot">Hello I m your friendly bot. I will help you to find live news headlines.</string>
     <string name="error_message_from_bot">I will help you to find news from below categories.</string>
+    <string name="view_result_news">View News</string>
+    <string name="general_category">general</string>
+    <string name="entertainment_category">entertainment</string>
+    <string name="gaming_category">gaming</string>
+    <string name="music_category">music</string>
+    <string name="politics_category">politics</string>
+    <string name="science_nature_category">Science-and-nature</string>
+    <string name="sport_category">sport</string>
+    <string name="technology_category">technology</string>
+    <string name="business_category">business</string>
 
+    <string name="channelid_for_general_category">abc-news-au</string>
+    <string name="channelid_for_entertainment_category">buzzfeed</string>
+    <string name="channelid_for_gaming_category">ign</string>
+    <string name="channelid_for_music_category">mtv-news</string>
+    <string name="channelid_for_politics_category">breitbart-news</string>
+    <string name="channelid_for_science_nature_category">national-geographic</string>
+    <string name="channelid_for_sport_category">espn</string>
+    <string name="channelid_for_technology_category">hacker-news</string>
+    <string name="channelid_for_business_category">the-economist</string>
 </resources>

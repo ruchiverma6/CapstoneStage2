@@ -2,7 +2,6 @@ package com.example.v_ruchd.capstonestage2.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -133,7 +132,7 @@ public class NewsContract {
         public static final String COLUMN_MESSAGE_FROM = "messagefrom";
         public static final String COLUMN_DATE = "date";
         public static final String COLUMN_MESSAGE_TYPE = "type";
-
+        public static final String COLUMN_MESSAGE_RESULT_ISCLICK= "isclicked";
         public static Uri buildMessageUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

@@ -74,7 +74,7 @@ public class NewsDebHelper extends SQLiteOpenHelper {
                 NewsContract.MessageEntry._ID + " INTEGER PRIMARY KEY," +  NewsContract.MessageEntry.COLUMN_MESSAGE_ID+ " INTEGER UNIQUE NOT NULL, " +
                 NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT + " TEXT NOT NULL, " +
                 NewsContract.MessageEntry.COLUMN_DATE + " TEXT NOT NULL, " +
-                NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE + " TEXT NOT NULL, " +  NewsContract.MessageEntry.COLUMN_MESSAGE_FROM + " TEXT NOT NULL, " +
+                NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE + " TEXT NOT NULL, " +  NewsContract.MessageEntry.COLUMN_MESSAGE_FROM + " TEXT NOT NULL, " +  NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK + " TEXT, " +
                 " UNIQUE (" + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + ") ON CONFLICT REPLACE);";
 
 

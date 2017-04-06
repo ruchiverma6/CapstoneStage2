@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
-import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
@@ -85,13 +84,13 @@ public class Utils {
         });
     }
 
-    public static void saveChatMessages(Context context,ChatMessageResponse chatMessageResponse, DataSaveListener dataSaveListener) {
+    public static void saveChatMessages(Context context, ChatMessageResponse chatMessageResponse, DataSaveListener dataSaveListener) {
         DataSaverTask saverTask = new DataSaverTask(context, chatMessageResponse);
         saverTask.setDataSaveListener(dataSaveListener);
         saverTask.execute();
     }
 
-    public static void fetchArticleResponse(final Context context, String selectedData,final DataUpdateListener dataUpdateListener) {
+    public static void fetchArticleResponse(final Context context, String selectedData, final DataUpdateListener dataUpdateListener) {
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
@@ -123,5 +122,29 @@ public class Utils {
                 }
             }
         });
+    }
+
+    public static String retrieveChannelForCategory(Context context, String selectedChannel) {
+        String newsChannel=null;
+        if (selectedChannel.equalsIgnoreCase(context.getString(R.string.general_category))) {
+            newsChannel = context.getString(R.string.channelid_for_general_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.entertainment_category))) {
+            newsChannel = context.getString(R.string.channelid_for_entertainment_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.technology_category))) {
+            newsChannel = context.getString(R.string.channelid_for_technology_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.science_nature_category))) {
+            newsChannel = context.getString(R.string.channelid_for_science_nature_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.music_category))) {
+            newsChannel = context.getString(R.string.channelid_for_music_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.politics_category))) {
+            newsChannel = context.getString(R.string.channelid_for_politics_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.gaming_category))) {
+            newsChannel = context.getString(R.string.channelid_for_gaming_category);
+        } else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.sport_category))) {
+            newsChannel = context.getString(R.string.channelid_for_sport_category);
+        }else if (selectedChannel.equalsIgnoreCase(context.getString(R.string.business_category))) {
+            newsChannel = context.getString(R.string.channelid_for_business_category);
+        }
+        return newsChannel;
     }
 }

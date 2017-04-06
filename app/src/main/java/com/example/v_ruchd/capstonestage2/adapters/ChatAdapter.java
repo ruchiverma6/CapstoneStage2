@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,15 +22,11 @@ import android.widget.Toast;
 import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.HomeActivity;
 import com.example.v_ruchd.capstonestage2.R;
-import com.example.v_ruchd.capstonestage2.Utils;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.data.NewsProvider;
+import com.example.v_ruchd.capstonestage2.holders.BOTMessageViewHolder;
+import com.example.v_ruchd.capstonestage2.holders.UserMessageViewHolder;
 import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
-import com.example.v_ruchd.capstonestage2.holders.BOTMessageViewHolder;
-import com.example.v_ruchd.capstonestage2.holders.InputSelectiomMessageViewHolder;
-import com.example.v_ruchd.capstonestage2.holders.NewsChannelResultViewHolder;
-import com.example.v_ruchd.capstonestage2.holders.UserMessageViewHolder;
 
 import java.util.List;
 
@@ -112,7 +109,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 View newChannelResultViewHolder = inflater.inflate(R.layout.newschannel_result_layout, parent, false);
                 viewHolder = new NewsChannelResultViewHolder(newChannelResultViewHolder);
 
-                ((HomeActivity) context).getSupportLoaderManager().initLoader(NEWSCHANNELRESPONSE_LOADER, null, this);
+
                 break;
 
             default:
@@ -123,14 +120,13 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
 
 
+
     public class NewsChannelResultViewHolder extends RecyclerView.ViewHolder {
-        public RecyclerView mRecyclerView;
+       public Button mNewsResultButton;
 
         public NewsChannelResultViewHolder(View itemView) {
             super(itemView);
-            mRecyclerView=(RecyclerView)itemView.findViewById(R.id.horizontal_list);
-     mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-           mRecyclerView.setAdapter(mChannelResponseAdapter);
+            mNewsResultButton=(Button)itemView.findViewById(R.id.news_result_btn);
 
         }
     }
@@ -154,7 +150,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
     }
 
-    private void configureViewHolder1(int type, RecyclerView.ViewHolder viewHolder, int position) {
+    private void configureViewHolder1(int type, RecyclerView.ViewHolder viewHolder, final int position) {
         final Cursor cursor = this.getItem(position);
         switch (viewHolder.getItemViewType()) {
             case TYPE_USER:
@@ -177,12 +173,47 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
             case TYPE_NEWS_CHANNELS_RESULT:
                 //  String selectedCategory;
+                NewsChannelResultViewHolder newsChannelResultViewHolder = (NewsChannelResultViewHolder) viewHolder;
+
+/*String isClick=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK));
+               if(Boolean.valueOf(isClick)){
+                   newsChannelResultViewHolder.mNewsResultButton.setClickable(false);
+               }*/
+               cursor.moveToPosition(position);
+                String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                String selectedCategory = "";
+                Cursor selectedCategoryCursor = context.getContentResolver().query(NewsContract.MessageCategorySelectionEntry.buildselectedCategoryForMessage(messageId), null, null, null, null);
+                if (selectedCategoryCursor.moveToFirst()) {
+                    selectedCategory = selectedCategoryCursor.getString(selectedCategoryCursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
+                }
+
+
+                newsChannelResultViewHolder.mNewsResultButton.setText("View "+ selectedCategory+ " news");
+              //  ((HomeActivity) context).onChannelection(selectedCategory);
+
+
+               newsChannelResultViewHolder.mNewsResultButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cursor.moveToPosition(position);
+                        String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                  /*      ContentValues contentValues=new ContentValues();
+                        contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID,messageId);
+                        contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK,true);
+                        context.getContentResolver().insert(NewsContract.MessageEntry.CONTENT_URI,contentValues);*/
+
+                        String selectedCategory = "";
+                        Cursor selectedCategoryCursor = context.getContentResolver().query(NewsContract.MessageCategorySelectionEntry.buildselectedCategoryForMessage(messageId), null, null, null, null);
+                        if (selectedCategoryCursor.moveToFirst()) {
+                            selectedCategory = selectedCategoryCursor.getString(selectedCategoryCursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
+                        }
+                        ((HomeActivity) context).onChannelection(selectedCategory);
+                    }
+                });
 
 
 
-
-
-                ((HomeActivity) context).getSupportLoaderManager().restartLoader(NEWSCHANNELRESPONSE_LOADER, null, this);
+           //     ((HomeActivity) context).getSupportLoaderManager().restartLoader(NEWSCHANNELRESPONSE_LOADER, null, this);
                 break;
             default:
 

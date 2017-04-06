@@ -82,7 +82,7 @@ public class LuisHandler {
         for (LUISEntity luisEntity : entities) {
             for (String msg : newsCategoryEnteriesForEntities) {
                 if (Pattern.compile(Pattern.quote(luisEntity.getName()), Pattern.CASE_INSENSITIVE).matcher(msg).find()
-                ) {
+                        ) {
                     final String selectedData = luisEntity.getName();
                     Utils.fetchNewsChannelsResponse(context, selectedData, new DataUpdateListener() {
 
@@ -100,6 +100,7 @@ public class LuisHandler {
                     return;
                 }
             }
+        }
 
 
             luisDataUpdateListener.onLuisDataUpdate("news", ChatAdapter.TYPE_INPUT_SELETION_RESULT);
@@ -110,7 +111,7 @@ public class LuisHandler {
                     //  printToResponse("Dialog prompt: " + dialog.getPrompt());
                 }
             }
-        }
+
 
     }
 }

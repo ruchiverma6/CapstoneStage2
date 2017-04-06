@@ -12,17 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.v_ruchd.capstonestage2.data.NewsDebHelper;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
-import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
-import com.example.v_ruchd.capstonestage2.modal.Articles;
-import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
-import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
-import com.example.v_ruchd.capstonestage2.modal.Sources;
-import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiClient;
-import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiInterface;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -35,12 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class BrowsedContentActivity extends AppCompatActivity implements BrowsedContentFragment.OnFragmentInteractionListener {
     private static final String TAG = BrowsedContentActivity.class.getSimpleName();
@@ -83,12 +69,13 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     @Override
     protected void onResume() {
         super.onResume();
-        Utils.fetchArticleResponse(this, selectedChannel, new DataUpdateListener() {
+    final String channelForCategory= Utils.retrieveChannelForCategory(this,selectedChannel);
+        Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener() {
             @Override
             public void onDataRetrieved() {
                 Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
                 if (null != browseContentFragment && browseContentFragment instanceof BrowsedContentFragment) {
-                    ((BrowsedContentFragment) browseContentFragment).onDataRetrieved(selectedChannel);
+                    ((BrowsedContentFragment) browseContentFragment).onDataRetrieved(channelForCategory);
                 }
             }
 
