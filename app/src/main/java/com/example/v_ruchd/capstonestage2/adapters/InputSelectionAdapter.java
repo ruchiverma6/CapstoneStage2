@@ -1,20 +1,15 @@
 package com.example.v_ruchd.capstonestage2.adapters;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.R;
-import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
 
 /**
@@ -23,12 +18,22 @@ import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListe
 
 public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAdapter.ViewHolder> {
 
+    private final Context context;
     private String[] mInpuSelectionEnteries;
     private final LayoutInflater mLayoutInflater;
     //private Cursor cursor;
     private OnBrowseContentItemClickListener onBrowseContentItemClickListener;
+    private int isAlreadyClicked;
+
+    public void setMessageId(String messageId,int isClickable) {
+        this.messageId = messageId;
+        this.isAlreadyClicked =isClickable;
+    }
+
+    public String messageId;
 
     public InputSelectionAdapter(Context context) {
+        this.context=context;
         mLayoutInflater = LayoutInflater.from(context);
         mInpuSelectionEnteries = context.getResources().getStringArray(R.array.inputcategoryselectionenteries);
     }
@@ -55,7 +60,15 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
        // cursor = getItem(position);
         String categoryType =mInpuSelectionEnteries[position]; //cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
         holder.mCategoryBtn.setText(categoryType);
+        if(isAlreadyClicked==100) {
+            holder.mCategoryBtn.setClickable(false);
+            holder.mCategoryBtn.setEnabled(false);
 
+
+        }else {
+            holder.mCategoryBtn.setClickable(true);
+            holder.mCategoryBtn.setEnabled(true);
+        }
     }
 
     public void setData(String[] stringArray) {
@@ -73,7 +86,7 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
             super(itemView);
            // mLinearLayout = (RelativeLayout) itemView.findViewById(R.id.layout_parent);
             mCategoryBtn = (Button) itemView.findViewById(R.id.category_item_btn);
-            mCategoryBtn.setOnClickListener(this);
+          mCategoryBtn.setOnClickListener(this);
 
         }
 
@@ -81,6 +94,15 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
+
+
+
+         /*   ContentValues contentValues=new ContentValues();
+            contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID,messageId);
+            contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK,true);
+            context.getContentResolver().update(NewsContract.MessageEntry.buildMessageWithId(messageId),contentValues,null,null);*/
+
+
           //  cursor = getItem(position);
             String categoryType = mInpuSelectionEnteries[position];//cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
             Bundle bundle = new Bundle();

@@ -136,6 +136,9 @@ public class NewsContract {
         public static Uri buildMessageUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+        public static Uri buildMessageWithId(String messageId) {
+            return CONTENT_URI.buildUpon().appendPath(messageId).build();
+        }
     }
 
 
@@ -158,6 +161,7 @@ public class NewsContract {
         public static Uri buildselectedCategoryForMessage(String messageID) {
             return CONTENT_URI.buildUpon().appendPath(messageID).build();
         }
+
     }
 
     public static class TotalMessageLengthEntry implements BaseColumns {

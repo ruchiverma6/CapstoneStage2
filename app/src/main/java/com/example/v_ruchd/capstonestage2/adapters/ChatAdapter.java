@@ -1,6 +1,7 @@
 package com.example.v_ruchd.capstonestage2.adapters;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -139,6 +140,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
             mRecyclerView = (RecyclerView) itemView.findViewById(R.id.horizontal_list);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             //inputSelectiomMessageViewHolder.mRecyclerView.setNestedScrollingEnabled(false);
+
             mRecyclerView.setAdapter(mInputSelectionAdapter);
            // mRecyclerView.setLayoutFrozen(true);
         }
@@ -167,7 +169,18 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 break;
 
             case TYPE_INPUT_SELETION_RESULT:
+                cursor.moveToPosition(position);
+                InputSelectiomMessageViewHolder inputSelectiomMessageViewHolder = (InputSelectiomMessageViewHolder) viewHolder;
+                String isClick=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK));
+                String is=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                int isAlreadyClicked=0;
+                if(null!=isClick && Integer.valueOf(isClick)==1){
+                    isAlreadyClicked=100;
+                    inputSelectiomMessageViewHolder.mRecyclerView.setEnabled(false);
+                }
+
                 mInputSelectionAdapter.setData(context.getResources().getStringArray(R.array.inputcategoryselectionenteries));
+            //    mInputSelectionAdapter.setMessageId(cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID)),isAlreadyClicked);
                 mInputSelectionAdapter.notifyDataSetChanged();
                 break;
 
@@ -175,10 +188,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 //  String selectedCategory;
                 NewsChannelResultViewHolder newsChannelResultViewHolder = (NewsChannelResultViewHolder) viewHolder;
 
-/*String isClick=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK));
-               if(Boolean.valueOf(isClick)){
-                   newsChannelResultViewHolder.mNewsResultButton.setClickable(false);
-               }*/
+
                cursor.moveToPosition(position);
                 String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
                 String selectedCategory = "";
@@ -389,6 +399,15 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
         }
         switch (viewType) {
             case Constants.INPUT_CATEGORY_TYPE:
+                viewHolder.getLayoutPosition();
+                int positionCategory = viewHolder.getAdapterPosition();
+                cursor.moveToPosition(positionCategory);
+String messageId=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                ContentValues contentValues=new ContentValues();
+                contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID,messageId);
+                contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK,true);
+                context.getContentResolver().update(NewsContract.MessageEntry.buildMessageWithId(messageId),contentValues,null,null);
+
                 Toast.makeText(context, "clicked item position " + position, Toast.LENGTH_LONG).show();
                 ((HomeActivity) context).onCategoryelection(selectedData);
 

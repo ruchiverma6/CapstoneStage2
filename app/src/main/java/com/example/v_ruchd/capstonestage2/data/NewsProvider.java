@@ -28,6 +28,7 @@ public class NewsProvider extends ContentProvider {
     static final int MESSAGESTOTALLENGTH = 107;
     static final int MESSAGESTOTALLENGTHPERUSER = 108;
     private static final int CATEGORYINPUTSELECTIONMESSAGEID = 109;
+    private static final int MESSAGEWITHMESSAGEID = 109;
     private NewsDebHelper mOpenHelper;
 
     /*static final int MOVIE_WITH_SORT_BY_ID = 102;
@@ -41,6 +42,7 @@ public class NewsProvider extends ContentProvider {
     private static final String selectionTotalLengthPerUser = NewsContract.TotalMessageLengthEntry.TABLE_NAME + "." + NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM + " = ? ";
     private static final String selectionCategoryForMessage = NewsContract.MessageCategorySelectionEntry.TABLE_NAME + "." + NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID + " = ? ";
     private static final String selectionCategoryForChannels = NewsContract.CategoryEntry.TABLE_NAME + "." + NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE + " = ? ";
+    private static final String selectionIdForMessage = NewsContract.MessageEntry.TABLE_NAME + "." + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + " = ? ";
 
     static UriMatcher buildUriMatcher() {
         // I know what you're thinking.  Why create a UriMatcher when you can use regular
@@ -65,6 +67,8 @@ public class NewsProvider extends ContentProvider {
         matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH, MESSAGESTOTALLENGTH);
         matcher.addURI(authority, NewsContract.PATH_MESSAGESLENGTH + "/*", MESSAGESTOTALLENGTHPERUSER);
         matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE + "/*", CATEGORYINPUTSELECTIONMESSAGEID);
+        matcher.addURI(authority, NewsContract.PATH_MESSAGES + "/*", MESSAGEWITHMESSAGEID);
+
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_SORT_BY);
 //        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_SORT_BY_ID);
 //        matcher.addURI(authority, MovieContract.PATH_TRAILERS, TRAILERS);
@@ -305,7 +309,24 @@ public class NewsProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int returnCount = 0;
+        switch (match) {
+            case MESSAGEWITHMESSAGEID:
+                String messageId = uri.getPathSegments().get(1);
+                long _id = db.update(NewsContract.MessageEntry.TABLE_NAME, values,selectionIdForMessage,new String[]{messageId});
+                if (_id > 0) {
+                    returnCount++;
+                }
+                else
+                    throw new android.database.SQLException("Failed to update row into " + uri);
+                 break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnCount;
     }
 
 
