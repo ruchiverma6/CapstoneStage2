@@ -1,27 +1,29 @@
 package com.example.v_ruchd.capstonestage2;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
-
-import java.util.List;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 public class NewsDetailActivity extends AppCompatActivity {
+
+    private static final String TAG = NewsDetailActivity.class.getSimpleName();
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
 
-
+// Obtain the shared Tracker instance.
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
         setUpActionBar();
         if (savedInstanceState == null) {
            Bundle arguments = getIntent().getExtras();
@@ -35,6 +37,14 @@ public class NewsDetailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String screenName=getString(R.string.news_detail);
+        Log.i(TAG, "Setting screen name: " + screenName);
+        mTracker.setScreenName("Image~" + screenName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
 
     /***
      * Method to set up action bar.

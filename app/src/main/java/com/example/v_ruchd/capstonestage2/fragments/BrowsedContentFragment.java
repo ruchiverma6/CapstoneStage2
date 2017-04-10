@@ -1,22 +1,26 @@
 package com.example.v_ruchd.capstonestage2.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.BrowsedContentActivity;
 import com.example.v_ruchd.capstonestage2.R;
@@ -53,8 +57,10 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-    private Activity mActivity;
+    private AppCompatActivity mActivity;
     private String selectedChannel;
+    private Toolbar toolbar;
+    private TextView titleTextView;
 
     public BrowsedContentFragment() {
         // Required empty public constructor
@@ -81,11 +87,13 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActivity = getActivity();
+        mActivity =   (AppCompatActivity) getActivity();;
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
 
     }
 
@@ -109,7 +117,31 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
         dataSets[11] = "Item12";
         dataSets[12] = "Item13";
 
+        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) view. findViewById(R.id.collapsing_toolbar_layout);
+titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
+        titleTextView.setText(((BrowsedContentActivity)mActivity).selectedChannel+ " " + getString(R.string.browsed_content));
+        AppBarLayout appBarLayout = (AppBarLayout) view.findViewById(R.id.app_bar_layout);
+        toolbar = (Toolbar) view.findViewById(R.id.app_bar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
 
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle(((BrowsedContentActivity)mActivity).selectedChannel+ " " + getString(R.string.browsed_content));
+                    isShow = true;
+                } else if (isShow) {
+                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+                    isShow = false;
+                }
+            }
+        });
+
+        setUpActionBar(toolbar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyler_view);
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 LinearLayoutManager.VERTICAL);
@@ -131,6 +163,14 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
         return view;
     }
 
+    private void setUpActionBar(Toolbar toolbar) {
+        mActivity.setSupportActionBar(toolbar);
+        mActivity.getSupportActionBar().setTitle(" ");
+
+
+        mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -147,7 +187,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((BrowsedContentActivity) mActivity).setActionBarTitle(getString(R.string.browsed_content));
+     //   ((BrowsedContentActivity) mActivity).setActionBarTitle(getString(R.string.browsed_content));
         getLoaderManager().initLoader(NEWS_LOADER, null, this);
     }
 

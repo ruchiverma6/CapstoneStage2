@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -281,6 +280,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                newsChannelResultViewHolder.mNewsResultButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         cursor.moveToPosition(position);
                         String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
                   /*      ContentValues contentValues=new ContentValues();

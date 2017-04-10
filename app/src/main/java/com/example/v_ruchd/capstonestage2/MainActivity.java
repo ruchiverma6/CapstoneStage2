@@ -5,11 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
-import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.luis.LuisDataUpdateListener;
@@ -33,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPref;
     InterstitialAd mInterstitialAd;
+    boolean isApplicationFistTimeStarted;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,22 +45,6 @@ public class MainActivity extends AppCompatActivity {
     private void initComponents() {
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.addunitid));
-        requestNewInterstitial();
-        sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        boolean isApplicationFistTimeStarted = sharedPref.getBoolean(getString(R.string.fist_time_start), true);
-        if (isApplicationFistTimeStarted) {
-            editor.putBoolean(getString(R.string.fist_time_start), false);
-            editor.commit();
-
-            procesSentMessageFromUser(getString(R.string.conversation_start_message));
-
-        }else{
-            stopProgressDialog();
-            startHomeActivity();
-        }
 
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
@@ -74,12 +56,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                /*if (mInterstitialAd.isLoaded()) {
+               /* if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
                 }*/
+                if(isApplicationFistTimeStarted){
+                    procesSentMessageFromUser(getString(R.string.conversation_start_message));
+                }
             }
         });
 
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+         isApplicationFistTimeStarted = sharedPref.getBoolean(getString(R.string.fist_time_start), true);
+        if (isApplicationFistTimeStarted) {
+            editor.putBoolean(getString(R.string.fist_time_start), false);
+            editor.commit();
+
+         //   procesSentMessageFromUser(getString(R.string.conversation_start_message));
+
+        }else{
+            stopProgressDialog();
+            startHomeActivity();
+        }
+
+        requestNewInterstitial();
 
     }
 

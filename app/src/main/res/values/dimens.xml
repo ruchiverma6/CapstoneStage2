@@ -5,4 +5,9 @@
     <dimen name="splash_title_text_size">50sp</dimen>
     <dimen name="loading_text_view_margin_bottom">50dp</dimen>
     <dimen name="loading_text_size">20sp</dimen>
+    <dimen name="widget_margin">0dp</dimen>
+    <dimen name="widget_news_default_width" >250dp</dimen>
+    <dimen name="widget_news_min_resize_width">220dp</dimen>
+    <dimen name="widget_news_min_resize_height">180dp</dimen>
+    <dimen name="widget_news_default_height" >@dimen/widget_news_min_resize_height</dimen>
 </resources>

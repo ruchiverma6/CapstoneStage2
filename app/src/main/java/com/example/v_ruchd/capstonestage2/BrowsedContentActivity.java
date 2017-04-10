@@ -2,7 +2,7 @@ package com.example.v_ruchd.capstonestage2;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -15,7 +15,8 @@ import android.view.MenuItem;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
-
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,16 +33,20 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     private boolean mTwoPane;
     private Context mContext;
 
-    private String selectedChannel;
+    public String selectedChannel;
+    private SharedPreferences sharedPref;
+    private Tracker mTracker;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
         selectedChannel = getIntent().getStringExtra("selectedchannel");
         setContentView(R.layout.activity_browsed_content);
-        setUpActionBar();
+      //  setUpActionBar();
         if (findViewById(R.id.news_detail_container) != null) {
 
             mTwoPane = true;
@@ -61,7 +66,12 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     @Override
     protected void onResume() {
         super.onResume();
+        String screenName=getString(R.string.news_article_list);
+        Log.i(TAG, "Setting screen name: " + screenName);
+        mTracker.setScreenName("Image~" + screenName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedChannel);
+        saveSelectedChannel(channelForCategory);
         Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener() {
             @Override
             public void onDataRetrieved() {
@@ -76,6 +86,14 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
 
             }
         });
+    }
+
+    private void saveSelectedChannel(String channelForCategory) {
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.selected_channel_for_news_result), channelForCategory);
+        editor.commit();
     }
 
 

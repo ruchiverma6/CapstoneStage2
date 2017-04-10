@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "260077869189",
+    "project_id": "news-bot-75d2e"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260077869189:android:e287c97f7be02a60",
+        "android_client_info": {
+          "package_name": "com.example.v_ruchd.capstonestage2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAv6tEIRuBWDGuf8ABOOVxHzC6t2Gld1ok"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-97131375-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

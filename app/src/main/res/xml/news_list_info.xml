@@ -1,0 +1,13 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:initialKeyguardLayout="@layout/news_widget_layout"
+    android:initialLayout="@layout/news_widget_layout"
+    android:minHeight="@dimen/widget_news_default_height"
+    android:minResizeHeight="@dimen/widget_news_min_resize_height"
+    android:minResizeWidth="@dimen/widget_news_min_resize_width"
+    android:minWidth="@dimen/widget_news_default_width"
+
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen|keyguard"
+    tools:ignore="UnusedAttribute" />

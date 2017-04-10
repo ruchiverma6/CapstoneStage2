@@ -51,4 +51,11 @@
     <string name="source_url_key">sourceurl</string>
     <string name="title_key">title</string>
     <string name="addunitid">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="news_value">News Headlines</string>
+    <string name="empty_stock_list">No Data!</string>
+    <string name="selected_channel_for_news_result">selectedchannelfornewsresult</string>
+    <string name="chat_screen">ChatScreen</string>
+    <string name="news_article_list">NewsArticleList</string>
+    <string name="news_detail">NewsDetail</string>
+    <string name="news_logo_icon">News Article Logo</string>
 </resources>

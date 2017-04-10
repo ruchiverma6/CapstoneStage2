@@ -12,9 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,13 +23,13 @@ import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.example.v_ruchd.capstonestage2.luis.LuisDataUpdateListener;
 import com.example.v_ruchd.capstonestage2.luis.LuisHandler;
-
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
-
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,15 +45,18 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private LinearLayoutManager mLayoutManager;
     InterstitialAd mInterstitialAd;
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.addunitid));
-        getSupportLoaderManager().initLoader(MESSAGE_LOADER, null, HomeActivity.this);
+        getSupportLoaderManager().initLoader(
+                MESSAGE_LOADER, null, HomeActivity.this);
         /*mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
@@ -85,7 +86,10 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onResume() {
         super.onResume();
-
+        String screenName=getString(R.string.chat_screen);
+        Log.i(TAG, "Setting screen name: " + screenName);
+        mTracker.setScreenName("Image~" + screenName);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void requestNewInterstitial() {
@@ -116,6 +120,10 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("sendmessage")
+                        .build());
                 String messageText = messageET.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
                     return;
@@ -243,7 +251,10 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void onChannelection(String selectedData) {
-
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("viewnewsresult")
+                .build());
         Intent intent = new Intent(HomeActivity.this, BrowsedContentActivity.class);
         intent.putExtra("selectedchannel", selectedData);
         startActivity(intent);

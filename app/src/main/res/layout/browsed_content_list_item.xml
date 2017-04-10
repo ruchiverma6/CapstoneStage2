@@ -22,5 +22,6 @@ android:layout_marginRight="2dp"
         android:layout_weight="0.5"
         android:layout_gravity="right|center_vertical"
         android:layout_marginRight="10dp"
+        android:contentDescription="@string/news_logo_icon"
         android:src="@drawable/ic_launcher"/>
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.example.v_ruchd.capstonestage2.NewsDetailActivity;
 import com.example.v_ruchd.capstonestage2.R;
@@ -62,6 +63,7 @@ public class NewDetailFragment extends Fragment {
         title=  bundle.getString(getString(R.string.title_key));
         ((NewsDetailActivity) mActivity).setActionBarTitle(title);
         webView = (WebView) mActivity.findViewById(R.id.web_view);
+        webView.setWebViewClient(new WebViewClient());
         webView.loadUrl(newsUrl);
     }
 
