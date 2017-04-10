@@ -1,5 +1,7 @@
 package com.example.v_ruchd.capstonestage2;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -18,13 +20,14 @@ public class NewsDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
+
+
         setUpActionBar();
         if (savedInstanceState == null) {
-          /*  Bundle arguments = new Bundle();
-            arguments.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());*/
+           Bundle arguments = getIntent().getExtras();
 
             NewDetailFragment fragment = new NewDetailFragment();
-          //  fragment.setArguments(arguments);
+           fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.news_detail_container, fragment)

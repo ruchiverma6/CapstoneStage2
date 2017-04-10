@@ -1,56 +1,158 @@
 package com.example.v_ruchd.capstonestage2;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.TextView;
+
+import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
+import com.example.v_ruchd.capstonestage2.luis.LuisDataUpdateListener;
+import com.example.v_ruchd.capstonestage2.luis.LuisHandler;
+import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
+import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
+import java.text.DateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    //ProgressDialog object
+    private ProgressDialog mProgressDialog;
 
-    private TextView mLoadingTextView;
+    private Context mContext;
+
+    private SharedPreferences sharedPref;
+    InterstitialAd mInterstitialAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext = this;
         initComponents();
-        new CountDownTimer(5000,1000){
-            @Override
-            public void onTick(long millisUntilFinished){
-                Log.v(TAG,"onTick"+millisUntilFinished);
-                if(millisUntilFinished>=3000){
-                    setSplashLoadingText(getString(R.string.loading_text)+".");
-                }else if(millisUntilFinished>=2000){
-                    setSplashLoadingText(getString(R.string.loading_text)+"..");
-                }else {
-                    setSplashLoadingText(getString(R.string.loading_text)+"...");
-                }
-            }
 
-            @Override
-            public void onFinish(){
-                startHomeActivity();
-            }
-        }.start();
+            showProgressDialog();
 
     }
 
     private void initComponents() {
-        mLoadingTextView=(TextView)findViewById(R.id.splash_loading_text_view);
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.addunitid));
+        requestNewInterstitial();
+        sharedPref = mContext.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        boolean isApplicationFistTimeStarted = sharedPref.getBoolean(getString(R.string.fist_time_start), true);
+        if (isApplicationFistTimeStarted) {
+            editor.putBoolean(getString(R.string.fist_time_start), false);
+            editor.commit();
+
+            procesSentMessageFromUser(getString(R.string.conversation_start_message));
+
+        }else{
+            stopProgressDialog();
+            startHomeActivity();
+        }
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                startHomeActivity();
+
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                /*if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                }*/
+            }
+        });
+
+
     }
 
-    private void setSplashLoadingText(String loadingText) {
-        mLoadingTextView.setText(loadingText);
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
+
+
+    //Method to stop progress dialog.
+    private void stopProgressDialog() {
+        if (null != mProgressDialog && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    /**
+     * Method to show progress dialog
+     */
+    private void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+        //mProgressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        mProgressDialog.setMessage(getString(R.string.loading_text));
+        mProgressDialog.getWindow().setGravity(Gravity.BOTTOM);
+        if(!isFinishing()) {
+            mProgressDialog.show();
+        }
+    }
+
 
     /**
      * Method to start HomeActivity.
      */
     private void startHomeActivity() {
-        Intent homeActivityIntent=new Intent(this,HomeActivity.class);
+        Intent homeActivityIntent = new Intent(this, HomeActivity.class);
         startActivity(homeActivityIntent);
+    }
+
+
+    private void procesSentMessageFromUser(final String messageText) {
+        LuisHandler luisHandler = new LuisHandler(this);
+        luisHandler.sendMessageToLuis(messageText, new LuisDataUpdateListener() {
+            @Override
+            public void onLuisDataUpdate(String messageContent, int messageType) {
+                ChatMessage chatMessage = new ChatMessage();
+                chatMessage.setMessage(messageContent);
+                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
+                chatMessage.setMessageType(messageType);
+                chatMessage.setFrom(getString(R.string.bot));
+
+
+                ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
+                chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
+
+                DataSaverTask saverTask = new DataSaverTask(MainActivity.this, chatMessageResponse);
+                saverTask.setDataSaveListener(new DataSaveListener() {
+                    @Override
+                    public void onDataSave() {
+
+                        stopProgressDialog();
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        }
+
+                    }
+                });
+                saverTask.execute();
+            }
+        });
     }
 }

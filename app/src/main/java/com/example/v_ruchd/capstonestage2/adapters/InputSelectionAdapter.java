@@ -60,7 +60,7 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
        // cursor = getItem(position);
         String categoryType =mInpuSelectionEnteries[position]; //cursor.getString(cursor.getColumnIndex(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE));
         holder.mCategoryBtn.setText(categoryType);
-        if(isAlreadyClicked==100) {
+        /*if(isAlreadyClicked==100) {
             holder.mCategoryBtn.setClickable(false);
             holder.mCategoryBtn.setEnabled(false);
 
@@ -68,7 +68,7 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
         }else {
             holder.mCategoryBtn.setClickable(true);
             holder.mCategoryBtn.setEnabled(true);
-        }
+        }*/
     }
 
     public void setData(String[] stringArray) {
@@ -86,7 +86,7 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
             super(itemView);
            // mLinearLayout = (RelativeLayout) itemView.findViewById(R.id.layout_parent);
             mCategoryBtn = (Button) itemView.findViewById(R.id.category_item_btn);
-          mCategoryBtn.setOnClickListener(this);
+            itemView.setOnClickListener(this);
 
         }
 

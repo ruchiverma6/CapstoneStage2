@@ -25,4 +25,9 @@
         <item>Technology</item>
 
     </string-array>
+    <string-array name="greeting_msges_from_bot" >
+        <item>Hi m your friendly bot I will help you to find live headline news</item>
+        <item>Hola what\s up. I will give u live headline news</item>
+        <item>Hello You can ask for live headline news.</item>
+    </string-array>
 </resources>

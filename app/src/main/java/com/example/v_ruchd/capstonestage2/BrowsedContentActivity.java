@@ -15,10 +15,7 @@ import android.view.MenuItem;
 import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,11 +31,7 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     private static final String ARTICLEFRAGMENTTAG = "newsarticletag";
     private boolean mTwoPane;
     private Context mContext;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+
     private String selectedChannel;
 
 
@@ -60,16 +53,15 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         } else {
             mTwoPane = false;
         }
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-    final String channelForCategory= Utils.retrieveChannelForCategory(this,selectedChannel);
+        final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedChannel);
         Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener() {
             @Override
             public void onDataRetrieved() {
@@ -101,16 +93,15 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
 
 
     public void setActionBarTitle(String title) {
-
-        getSupportActionBar().setTitle(title);
+        String formattedTitle = selectedChannel + " " + title;
+        getSupportActionBar().setTitle(formattedTitle.toUpperCase());
     }
 
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(Bundle result) {
         if (mTwoPane) {
-           /* Bundle args = new Bundle();
-            args.putParcelable(DetailFragment.DETAIL_URI, contentUri);*/
+
 
             NewDetailFragment fragment = new NewDetailFragment();
             // fragment.setArguments(args);
@@ -120,7 +111,7 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
                     .commit();
         } else {
             Intent intent = new Intent(this, NewsDetailActivity.class);
-            // .setData(contentUri);
+            intent.putExtras(result);
             startActivity(intent);
         }
     }
@@ -210,40 +201,22 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     }
 
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("BrowsedContent Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
+
 
     @Override
     public void onStart() {
         super.onStart();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
+
+
     }
 }
 

@@ -99,9 +99,11 @@ public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAd
         public void onClick(View v) {
             int position = getAdapterPosition();
             cursor = getItem(position);
-           String sourceUrl=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
+            String sourceUrl = cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
+            String title = cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_TITLE));
             Bundle bundle = new Bundle();
-            bundle.putString("newssourceurl", sourceUrl);
+            bundle.putString(mContext.getString(R.string.source_url_key), sourceUrl);
+            bundle.putString(mContext.getString(R.string.title_key), title);
             onBrowseContentItemClickListener.onClick(v, 0, bundle);
         }
     }

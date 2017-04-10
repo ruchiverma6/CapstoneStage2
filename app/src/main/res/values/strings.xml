@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">NewsBot</string>
+    <string name="app_name">NEWS BOT</string>
     <string name="loading_text">Loading</string>
     <string name="clear">Clear</string>
-    <string name="browsed_content">Browsed Contents</string>
+    <string name="browsed_content">NEWS</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="news_info">News Info</string>
-    <string-array name="inputcategoryselectionenteries" >
+    <string-array name="inputcategoryselectionenteries">
         <item>Entertainment</item>
         <item>Business</item>
         <item>Gaming</item>
@@ -42,4 +42,13 @@
     <string name="channelid_for_sport_category">espn</string>
     <string name="channelid_for_technology_category">hacker-news</string>
     <string name="channelid_for_business_category">the-economist</string>
+    <string name="select_category_msg">You can select news for Sports, General, Entertainment, Buisness, Gaming, Music, Technology, Science-and-nature and Politics.</string>
+    <string name="bot">bot</string>
+    <string name="conversation_start_message">Hi</string>
+    <string name="preference_file_key">myprefs</string>
+    <string name="fist_time_start">appfirsttimestart</string>
+    <string name="user">user</string>
+    <string name="source_url_key">sourceurl</string>
+    <string name="title_key">title</string>
+    <string name="addunitid">ca-app-pub-3940256099942544/1033173712</string>
 </resources>

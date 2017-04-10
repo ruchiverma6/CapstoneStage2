@@ -21,9 +21,12 @@ import com.example.v_ruchd.capstonestage2.R;
  * to handle interaction events.
  */
 public class NewDetailFragment extends Fragment {
-private WebView webView;
+    public static final String DETAIL_URI = "detail";
+    private WebView webView;
     private OnFragmentInteractionListener mListener;
     private Activity mActivity;
+    private String newsUrl;
+    private String title;
 
     public NewDetailFragment() {
         // Required empty public constructor
@@ -47,20 +50,19 @@ private WebView webView;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       /* if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity=getActivity();
-        ((NewsDetailActivity) mActivity).setActionBarTitle(getString(R.string.news_info));
-        webView=(WebView)mActivity.findViewById(R.id.web_view);
+        mActivity = getActivity();
+        Bundle bundle = getArguments();
+        newsUrl=  bundle.getString(getString(R.string.source_url_key));
+        title=  bundle.getString(getString(R.string.title_key));
+        ((NewsDetailActivity) mActivity).setActionBarTitle(title);
+        webView = (WebView) mActivity.findViewById(R.id.web_view);
+        webView.loadUrl(newsUrl);
     }
 
     @Override

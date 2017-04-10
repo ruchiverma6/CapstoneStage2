@@ -16,6 +16,7 @@ import com.microsoft.cognitiveservices.luis.clientlibrary.LUISResponse;
 import com.microsoft.cognitiveservices.luis.clientlibrary.LUISResponseHandler;
 
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -57,7 +58,8 @@ public class LuisHandler {
         String[] greetingMsgEnteries = context.getResources().getStringArray(R.array.greeting_msg_enteries);
         for (String msg : greetingMsgEnteries) {
             if (topIntent.getName().equalsIgnoreCase(msg)) {
-                luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.greeting_msg_from_bot), ChatAdapter.TYPE_BOT);
+                String greetingMsg=getGreetingMsg ();
+                luisDataUpdateListener.onLuisDataUpdate(greetingMsg, ChatAdapter.TYPE_BOT);
                 return;
             }
 
@@ -103,15 +105,22 @@ public class LuisHandler {
         }
 
 
-            luisDataUpdateListener.onLuisDataUpdate("news", ChatAdapter.TYPE_INPUT_SELETION_RESULT);
-            LUISDialog dialog = response.getDialog();
-            if (dialog != null) {
-                Log.v("Dialog Status: ", dialog.getStatus());
-                if (!dialog.isFinished()) {
-                    //  printToResponse("Dialog prompt: " + dialog.getPrompt());
-                }
+        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.select_category_msg), ChatAdapter.TYPE_BOT);
+        LUISDialog dialog = response.getDialog();
+        if (dialog != null) {
+            Log.v("Dialog Status: ", dialog.getStatus());
+            if (!dialog.isFinished()) {
+                //  printToResponse("Dialog prompt: " + dialog.getPrompt());
             }
+        }
 
+
+    }
+
+    private String getGreetingMsg() {
+        String[] greetingMsgArray = context.getResources().getStringArray(R.array.greeting_msges_from_bot);
+        int idx = new Random().nextInt(greetingMsgArray.length);
+        return (greetingMsgArray[idx]);
 
     }
 }

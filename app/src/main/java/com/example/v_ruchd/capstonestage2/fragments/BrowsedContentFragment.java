@@ -132,13 +132,6 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -167,13 +160,10 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     @Override
     public void onClick(View view, int position, Bundle bundle) {
         Log.v(TAG, "" + mRecyclerView.getChildAdapterPosition(view));
-        String sourceUrl = bundle.getString("sourceurl");
-
-
 
 
         ((OnFragmentInteractionListener) getActivity())
-                .onFragmentInteraction(null);
+                .onFragmentInteraction(bundle);
     }
 
     @Override
@@ -209,7 +199,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Bundle result);
     }
 
 

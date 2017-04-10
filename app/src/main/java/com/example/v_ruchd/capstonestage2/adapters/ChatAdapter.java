@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,6 +31,8 @@ import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListe
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 
 import java.util.List;
+
+
 
 
 public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.LoaderCallbacks<Cursor>, OnBrowseContentItemClickListener {
@@ -132,7 +135,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
         }
     }
 
-    public class InputSelectiomMessageViewHolder extends RecyclerView.ViewHolder {
+    public class InputSelectiomMessageViewHolder extends RecyclerView.ViewHolder implements OnBrowseContentItemClickListener{
         public RecyclerView mRecyclerView;
 
         public InputSelectiomMessageViewHolder(View itemView) {
@@ -140,9 +143,39 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
             mRecyclerView = (RecyclerView) itemView.findViewById(R.id.horizontal_list);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
             //inputSelectiomMessageViewHolder.mRecyclerView.setNestedScrollingEnabled(false);
+            mInputSelectionAdapter = new InputSelectionAdapter(context);
+         //   mInputSelectionAdapter.setRecyclerViewListener(this);
 
             mRecyclerView.setAdapter(mInputSelectionAdapter);
            // mRecyclerView.setLayoutFrozen(true);
+        }
+
+        @Override
+        public void onClick(View view, int position, Bundle result) {
+            String selectedData = null;
+            int viewType = -1;
+            if (null != result) {
+                viewType = result.getInt("viewtype");
+                selectedData = result.getString("selecteddata");
+
+            }
+
+            viewHolder.getLayoutPosition();
+            mRecyclerView.getChildLayoutPosition(view);
+            int positionCategory = viewHolder.getAdapterPosition();
+            if(positionCategory==-1){
+                return;
+            }
+            cursor.moveToPosition(positionCategory);
+            String messageId=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+            ContentValues contentValues=new ContentValues();
+            contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID,messageId);
+            contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK,true);
+            context.getContentResolver().update(NewsContract.MessageEntry.buildMessageWithId(messageId),contentValues,null,null);
+
+            Toast.makeText(context, "clicked item position " + position, Toast.LENGTH_LONG).show();
+            ((HomeActivity) context).onCategoryelection(selectedData);
+
         }
     }
 
@@ -152,7 +185,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
     }
 
-    private void configureViewHolder1(int type, RecyclerView.ViewHolder viewHolder, final int position) {
+    private void configureViewHolder1(final int type, RecyclerView.ViewHolder viewHolder, final int position) {
         final Cursor cursor = this.getItem(position);
         switch (viewHolder.getItemViewType()) {
             case TYPE_USER:
@@ -175,9 +208,52 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 String is=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
                 int isAlreadyClicked=0;
                 if(null!=isClick && Integer.valueOf(isClick)==1){
+                    setClickFalse((View) ((InputSelectiomMessageViewHolder) viewHolder).mRecyclerView,false);
                     isAlreadyClicked=100;
-                    inputSelectiomMessageViewHolder.mRecyclerView.setEnabled(false);
+                   // inputSelectiomMessageViewHolder.mRecyclerView.setEnabled(false);
+                 /* ((InputSelectiomMessageViewHolder) viewHolder).mRecyclerView.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+                        @Override
+                        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                            // true: consume touch event
+                            // false: dispatch touch event
+                            return false;
+                        }
+                    });*/
+                }else {
+                    setClickFalse((View) ((InputSelectiomMessageViewHolder) viewHolder).mRecyclerView,true);
                 }
+
+
+                mInputSelectionAdapter.setRecyclerViewListener(new OnBrowseContentItemClickListener() {
+                    @Override
+                    public void onClick(View view, int position, Bundle result) {
+                        String selectedData = null;
+                        int viewType = -1;
+                        if (null != result) {
+                            viewType = result.getInt("viewtype");
+                            selectedData = result.getString("selecteddata");
+
+                        }
+
+                        /*viewHolder.getLayoutPosition();
+                        mRecyclerView.getChildLayoutPosition(view);
+                        int positionCategory = viewHolder.getAdapterPosition();
+                        if(positionCategory==-1){
+                            return;
+                        }*/
+                        cursor.moveToPosition(position);
+                        String messageId=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                        ContentValues contentValues=new ContentValues();
+                        contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID,messageId);
+                        contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK,true);
+                        context.getContentResolver().update(NewsContract.MessageEntry.buildMessageWithId(messageId),contentValues,null,null);
+
+                        Toast.makeText(context, "clicked item position " + position, Toast.LENGTH_LONG).show();
+                        ((HomeActivity) context).onCategoryelection(selectedData);
+
+
+                    }
+                });
 
                 mInputSelectionAdapter.setData(context.getResources().getStringArray(R.array.inputcategoryselectionenteries));
             //    mInputSelectionAdapter.setMessageId(cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID)),isAlreadyClicked);
@@ -240,9 +316,9 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
         this.context = context;
         //   this.chatMessages = chatMessages;
         inflater = LayoutInflater.from(context);
-        mInputSelectionAdapter = new InputSelectionAdapter(context);
+       /* mInputSelectionAdapter = new InputSelectionAdapter(context);
         mInputSelectionAdapter.setRecyclerViewListener(this);
-        //mI.set
+*/        //mI.set
         mChannelResponseAdapter = new NewsChannelResultAdapter(context);
         mChannelResponseAdapter.setRecyclerViewListener(this);
     }
@@ -263,6 +339,17 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
     public long getItemId(int position) {
         return position;
     }
+
+   public void setClickFalse(View view,final boolean isClicked){
+       view.setEnabled(isClicked);
+       if(view instanceof ViewGroup){
+           ViewGroup viewGroup=(ViewGroup)view;
+           for(int i=0;i<viewGroup.getChildCount();i++){
+               View child=viewGroup.getChildAt(i);
+               setClickFalse(child,isClicked);
+           }
+       }
+   }
 
 
     /* @Override
@@ -400,9 +487,10 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
         switch (viewType) {
             case Constants.INPUT_CATEGORY_TYPE:
                 viewHolder.getLayoutPosition();
+             //  mRecyclerView.getChildLayoutPosition(view);
                 int positionCategory = viewHolder.getAdapterPosition();
                 cursor.moveToPosition(positionCategory);
-String messageId=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
+                String messageId=cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
                 ContentValues contentValues=new ContentValues();
                 contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID,messageId);
                 contentValues.put(NewsContract.MessageEntry.COLUMN_MESSAGE_RESULT_ISCLICK,true);
