@@ -57,7 +57,7 @@ public class NewsDebHelper extends SQLiteOpenHelper {
                 NewsContract.ArticleEntry.COLUMN_URL + " TEXT NOT NULL, " +
 
                 NewsContract.ArticleEntry.COLUMN_URL_TO_IMAGE + " TEXT NOT NULL, " +
-                NewsContract.ArticleEntry.COLUMN_PUBLISHEDAT + " TEXT NOT NULL,  " +
+                NewsContract.ArticleEntry.COLUMN_PUBLISHEDAT + " TEXT,  " +
 
                 " FOREIGN KEY (" + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + ") REFERENCES " +
                 NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID + ") , " + " UNIQUE (" + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID +", "+ NewsContract.ArticleEntry.COLUMN_TITLE+ ") ON CONFLICT REPLACE);";

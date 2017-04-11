@@ -1,12 +1,11 @@
 package com.example.v_ruchd.capstonestage2.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -15,34 +14,36 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.v_ruchd.capstonestage2.BrowsedContentActivity;
 import com.example.v_ruchd.capstonestage2.R;
-import com.example.v_ruchd.capstonestage2.adapters.BrowsedContentAdapter;
+import com.example.v_ruchd.capstonestage2.adapters.ArticlesAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
+import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
+import com.example.v_ruchd.capstonestage2.modal.Articles;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BrowsedContentFragment.OnFragmentInteractionListener} interface
+ * {@link ArticlesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link BrowsedContentFragment#newInstance} factory method to
+ * Use the {@link ArticlesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BrowsedContentFragment extends Fragment implements OnBrowseContentItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticlesFragment extends Fragment implements OnDataItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    private static final String TAG = BrowsedContentFragment.class.getSimpleName();
+    private static final String TAG = ArticlesFragment.class.getSimpleName();
     private static final int NEWS_LOADER = 0;
     private RecyclerView mRecyclerView;
-    private BrowsedContentAdapter mAdapter;
+    private ArticlesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private String[] dataSets = new String[13];
 
@@ -59,10 +60,12 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity mActivity;
     private String selectedChannel;
-    private Toolbar toolbar;
-    private TextView titleTextView;
 
-    public BrowsedContentFragment() {
+    private TextView emptyDataTextView;
+
+    private ProgressDialog mProgressDialog;
+
+    public ArticlesFragment() {
         // Required empty public constructor
     }
 
@@ -72,11 +75,11 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment BrowsedContentFragment.
+     * @return A new instance of fragment ArticlesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BrowsedContentFragment newInstance(String param1, String param2) {
-        BrowsedContentFragment fragment = new BrowsedContentFragment();
+    public static ArticlesFragment newInstance(String param1, String param2) {
+        ArticlesFragment fragment = new ArticlesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -88,6 +91,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivity =   (AppCompatActivity) getActivity();;
+        showProgressDialog();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -101,7 +105,7 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_browsed_content, container, false);
+        View view = inflater.inflate(R.layout.fragment_article_content, container, false);
 
         dataSets[0] = "Item1";
         dataSets[1] = "Item2";
@@ -117,31 +121,8 @@ public class BrowsedContentFragment extends Fragment implements OnBrowseContentI
         dataSets[11] = "Item12";
         dataSets[12] = "Item13";
 
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) view. findViewById(R.id.collapsing_toolbar_layout);
-titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
-        titleTextView.setText(((BrowsedContentActivity)mActivity).selectedChannel+ " " + getString(R.string.browsed_content));
-        AppBarLayout appBarLayout = (AppBarLayout) view.findViewById(R.id.app_bar_layout);
-        toolbar = (Toolbar) view.findViewById(R.id.app_bar);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = false;
-            int scrollRange = -1;
 
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbarLayout.setTitle(((BrowsedContentActivity)mActivity).selectedChannel+ " " + getString(R.string.browsed_content));
-                    isShow = true;
-                } else if (isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
-                    isShow = false;
-                }
-            }
-        });
-
-        setUpActionBar(toolbar);
+        emptyDataTextView=(TextView)view.findViewById(R.id.empty_view);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyler_view);
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 LinearLayoutManager.VERTICAL);
@@ -155,7 +136,7 @@ titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new BrowsedContentAdapter(mActivity, dataSets);
+        mAdapter = new ArticlesAdapter(mActivity, dataSets);
         mAdapter.setRecylerViewItemListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -163,13 +144,6 @@ titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
         return view;
     }
 
-    private void setUpActionBar(Toolbar toolbar) {
-        mActivity.setSupportActionBar(toolbar);
-        mActivity.getSupportActionBar().setTitle(" ");
-
-
-        mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
 
 
     @Override
@@ -187,7 +161,7 @@ titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-     //   ((BrowsedContentActivity) mActivity).setActionBarTitle(getString(R.string.browsed_content));
+     //   ((ArticlesActivity) mActivity).setActionBarTitle(getString(R.string.browsed_content));
         getLoaderManager().initLoader(NEWS_LOADER, null, this);
     }
 
@@ -222,10 +196,27 @@ titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
         mAdapter.swapCursor(null);
     }
 
-    public void onDataRetrieved(String selectedChannel) {
-        this.selectedChannel = selectedChannel;
-        getLoaderManager().restartLoader(NEWS_LOADER, null, this);
+    public void onDataRetrieved(String selectedChannel, List<Articles> articleList) {
+        stopProgressDialog();
+
+        if(!mActivity.isFinishing()) {
+            this.selectedChannel = selectedChannel;
+            if (articleList == null || articleList.size() == 0) {
+                emptyDataTextView.setVisibility(View.VISIBLE);
+            } else {
+                emptyDataTextView.setVisibility(View.GONE);
+                if(!mActivity.isFinishing()) {
+                    getLoaderManager().restartLoader(NEWS_LOADER, null, this);
+                }
+            }
+        }
     }
+
+    public void onDataError(String message) {
+        emptyDataTextView.setVisibility(View.VISIBLE);
+        emptyDataTextView.setText(message);
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -242,5 +233,23 @@ titleTextView=(TextView)view.findViewById(R.id.tool_bar_title);
         void onFragmentInteraction(Bundle result);
     }
 
+    /**
+     * Method to show progress dialog
+     */
+    private void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(mActivity);
+        mProgressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+        mProgressDialog.setMessage(getString(R.string.loading_text));
+        mProgressDialog.getWindow().setGravity(Gravity.CENTER);
+        if(!mActivity.isFinishing()) {
+            mProgressDialog.show();
+        }
+    }
 
+    //Method to stop progress dialog.
+    private void stopProgressDialog() {
+        if (!mActivity.isFinishing() && null != mProgressDialog && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
 }

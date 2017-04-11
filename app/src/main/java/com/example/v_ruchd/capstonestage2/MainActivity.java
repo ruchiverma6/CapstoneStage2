@@ -56,11 +56,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-               /* if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                }*/
                 if(isApplicationFistTimeStarted){
-                    procesSentMessageFromUser(getString(R.string.conversation_start_message));
+
+                        procesSentMessageFromUser(getString(R.string.conversation_start_message));
+
                 }
             }
         });
@@ -74,15 +73,18 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean(getString(R.string.fist_time_start), false);
             editor.commit();
 
-         //   procesSentMessageFromUser(getString(R.string.conversation_start_message));
-
         }else{
             stopProgressDialog();
             startHomeActivity();
         }
 
-        requestNewInterstitial();
 
+        if(isApplicationFistTimeStarted && !Utils.isNetworkAvailable(MainActivity.this)) {
+            stopProgressDialog();
+            startHomeActivity();
+        }else {
+            requestNewInterstitial();
+        }
     }
 
 
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Method to stop progress dialog.
     private void stopProgressDialog() {
-        if (null != mProgressDialog && mProgressDialog.isShowing()) {
+        if (!isFinishing() && null != mProgressDialog && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
     }
@@ -108,10 +110,9 @@ public class MainActivity extends AppCompatActivity {
     private void showProgressDialog() {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
-        //mProgressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         mProgressDialog.setMessage(getString(R.string.loading_text));
         mProgressDialog.getWindow().setGravity(Gravity.BOTTOM);
-        if(!isFinishing()) {
+        if(!isFinishing() && !mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }
     }
@@ -136,8 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
                 chatMessage.setMessageType(messageType);
                 chatMessage.setFrom(getString(R.string.bot));
-
-
                 ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
                 chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
 
@@ -154,6 +153,15 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 saverTask.execute();
+            }
+
+            @Override
+            public void onLuisDataErrorListener(String errorMessage) {
+                stopProgressDialog();
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                }
+                startHomeActivity();
             }
         });
     }

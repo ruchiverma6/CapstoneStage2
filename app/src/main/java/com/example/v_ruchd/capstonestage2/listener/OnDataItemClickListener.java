@@ -7,7 +7,7 @@ import android.view.View;
  * Created by v-ruchd on 3/17/2017.
  */
 
-public interface OnBrowseContentItemClickListener {
+public interface OnDataItemClickListener {
 
     public void onClick(View view,int position,Bundle result);
 }

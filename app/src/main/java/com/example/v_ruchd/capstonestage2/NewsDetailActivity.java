@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
+import com.example.v_ruchd.capstonestage2.fragments.NewsDetailFragment;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -28,7 +28,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
            Bundle arguments = getIntent().getExtras();
 
-            NewDetailFragment fragment = new NewDetailFragment();
+            NewsDetailFragment fragment = new NewsDetailFragment();
            fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()

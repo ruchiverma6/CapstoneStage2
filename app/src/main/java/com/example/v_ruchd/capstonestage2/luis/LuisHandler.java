@@ -5,9 +5,7 @@ import android.util.Log;
 
 import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.R;
-import com.example.v_ruchd.capstonestage2.Utils;
 import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
-import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.microsoft.cognitiveservices.luis.clientlibrary.LUISClient;
 import com.microsoft.cognitiveservices.luis.clientlibrary.LUISDialog;
 import com.microsoft.cognitiveservices.luis.clientlibrary.LUISEntity;
@@ -43,7 +41,8 @@ public class LuisHandler {
                 @Override
                 public void onFailure(Exception e) {
                     e.printStackTrace();
-                    //printToResponse(e.getMessage());
+
+
                 }
             });
         } catch (Exception e) {
@@ -86,10 +85,11 @@ public class LuisHandler {
                 if (Pattern.compile(Pattern.quote(luisEntity.getName()), Pattern.CASE_INSENSITIVE).matcher(msg).find()
                         ) {
                     final String selectedData = luisEntity.getName();
-                    Utils.fetchNewsChannelsResponse(context, selectedData, new DataUpdateListener() {
+                    luisDataUpdateListener.onLuisDataUpdate("inputcategory:" + selectedData, ChatAdapter.TYPE_NEWS_CHANNELS_RESULT);
+                 /*   Utils.fetchNewsChannelsResponse(context, selectedData, new DataUpdateListener<Sources>() {
 
                         @Override
-                        public void onDataRetrieved() {
+                        public void onDataRetrieved(List<Sources> sources) {
                             luisDataUpdateListener.onLuisDataUpdate("inputcategory:" + selectedData, ChatAdapter.TYPE_NEWS_CHANNELS_RESULT);
                         }
 
@@ -98,7 +98,7 @@ public class LuisHandler {
 
                         }
 
-                    });
+                    });*/
                     return;
                 }
             }

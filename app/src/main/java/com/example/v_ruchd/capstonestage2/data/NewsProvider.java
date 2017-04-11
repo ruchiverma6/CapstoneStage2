@@ -155,7 +155,19 @@ public class NewsProvider extends ContentProvider {
             }
 
             case NEWSARTICLES_WITH_SOURCECHANNELS: {
-                retCursor = getArticledForNewsChannel(uri, projection, sortOrder);
+
+                String sortBy = uri.getPathSegments().get(1);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        NewsContract.ArticleEntry.TABLE_NAME,
+                        projection,
+                        selectionMovieWithSortBy,
+                        new String[]{sortBy},
+                        null,
+                        null,
+                        sortOrder
+                );
+
+             //   retCursor = getArticledForNewsChannel(uri, projection, sortOrder);
                 break;
             }
 

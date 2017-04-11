@@ -16,16 +16,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
-import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
 import com.example.v_ruchd.capstonestage2.luis.LuisDataUpdateListener;
 import com.example.v_ruchd.capstonestage2.luis.LuisHandler;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -57,26 +56,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         mInterstitialAd.setAdUnitId(getString(R.string.addunitid));
         getSupportLoaderManager().initLoader(
                 MESSAGE_LOADER, null, HomeActivity.this);
-        /*mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-
-
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                }
-            }
-        });*/
-
-     //   requestNewInterstitial();
-
-
-
         setUpActionBar();
         initComponents();
 
@@ -92,13 +71,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
-    private void requestNewInterstitial() {
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("SEE_YOUR_LOGCAT_TO_GET_YOUR_DEVICE_ID")
-                .build();
-
-        mInterstitialAd.loadAd(adRequest);
-    }
 
     private void initComponents() {
 
@@ -112,11 +84,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         messagesContainer.setLayoutManager(mLayoutManager);
         messageET = (EditText) findViewById(R.id.messageEdit);
         sendBtn = (Button) findViewById(R.id.chatSendButton);
-
-
-       // getSupportLoaderManager().initLoader(MESSAGE_LOADER, null, this);
-
-
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +93,10 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                         .build());
                 String messageText = messageET.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
+                    return;
+                }
+                if(!Utils.isNetworkAvailable(HomeActivity.this)){
+                    Toast.makeText(HomeActivity.this,getString(R.string.no_internet_connectivity),Toast.LENGTH_LONG).show();
                     return;
                 }
                 processentMessageFromUser(messageText);
@@ -174,6 +145,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 });
                 saverTask.execute();
             }
+
+            @Override
+            public void onLuisDataErrorListener(String errorMessage) {
+
+            }
         });
     }
 
@@ -187,11 +163,6 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-
-    private void showBrowsedContentScreen() {
-        Intent browsedContentActivityintent = new Intent(this, BrowsedContentActivity.class);
-        startActivity(browsedContentActivityintent);
-    }
 
 
     @Override
@@ -222,40 +193,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().restartLoader(0, null, this);
     }
 
-    public void onCategoryelection(final String selectedData) {
-        Utils.fetchNewsChannelsResponse(this, selectedData, new DataUpdateListener() {
-
-            @Override
-            public void onDataRetrieved() {
-
-                ChatMessage msg7 = new ChatMessage();
-                msg7.setId(7);
-                msg7.setMessageType(3);
-                msg7.setMessage("inputcategory:" + selectedData);
-                msg7.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                msg7.setFrom(getString(R.string.bot));
-
-                ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
-                chatMessageResponse.setChatMessages(new ChatMessage[]{msg7});
-
-
-                Utils.saveChatMessages(HomeActivity.this, chatMessageResponse, HomeActivity.this);
-
-            }
-
-            @Override
-            public void onDataError(String message) {
-
-            }
-        });
-    }
 
     public void onChannelection(String selectedData) {
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Action")
                 .setAction("viewnewsresult")
                 .build());
-        Intent intent = new Intent(HomeActivity.this, BrowsedContentActivity.class);
+        Intent intent = new Intent(HomeActivity.this, ArticlesActivity.class);
         intent.putExtra("selectedchannel", selectedData);
         startActivity(intent);
     }

@@ -1,11 +1,13 @@
 package com.example.v_ruchd.capstonestage2.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +20,19 @@ import com.example.v_ruchd.capstonestage2.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewDetailFragment.OnFragmentInteractionListener} interface
+ * {@link NewsDetailFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class NewDetailFragment extends Fragment {
+public class NewsDetailFragment extends Fragment {
     public static final String DETAIL_URI = "detail";
     private WebView webView;
     private OnFragmentInteractionListener mListener;
     private Activity mActivity;
     private String newsUrl;
     private String title;
+    private ProgressDialog mProgressDialog;
 
-    public NewDetailFragment() {
+    public NewsDetailFragment() {
         // Required empty public constructor
     }
 
@@ -58,12 +61,19 @@ public class NewDetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mActivity = getActivity();
+
         Bundle bundle = getArguments();
-        newsUrl=  bundle.getString(getString(R.string.source_url_key));
-        title=  bundle.getString(getString(R.string.title_key));
-        ((NewsDetailActivity) mActivity).setActionBarTitle(title);
+        if(null!=bundle) {
+            newsUrl = bundle.getString(getString(R.string.source_url_key));
+
+            title = bundle.getString(getString(R.string.title_key));
+            showProgressDialog();
+        }
+        if(mActivity instanceof NewsDetailActivity) {
+            ((NewsDetailActivity) mActivity).setActionBarTitle(title);
+        }
         webView = (WebView) mActivity.findViewById(R.id.web_view);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new CustomWebViewClient());
         webView.loadUrl(newsUrl);
     }
 
@@ -72,6 +82,8 @@ public class NewDetailFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -87,4 +99,35 @@ public class NewDetailFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private class CustomWebViewClient extends WebViewClient {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            stopProgressDialog();
+        }
+
+
+    }
+
+    /**
+     * Method to show progress dialog
+     */
+    private void showProgressDialog() {
+        mProgressDialog = new ProgressDialog(mActivity);
+        mProgressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+        mProgressDialog.setMessage(getString(R.string.loading_text));
+        mProgressDialog.getWindow().setGravity(Gravity.CENTER);
+        if(!mActivity.isFinishing() && !mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+    }
+
+    //Method to stop progress dialog.
+    private void stopProgressDialog() {
+        if (!mActivity.isFinishing() && null != mProgressDialog && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+
 }

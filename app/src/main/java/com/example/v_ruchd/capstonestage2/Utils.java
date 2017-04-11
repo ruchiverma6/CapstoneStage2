@@ -1,6 +1,8 @@
 package com.example.v_ruchd.capstonestage2;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
@@ -15,6 +17,8 @@ import com.example.v_ruchd.capstonestage2.modal.Sources;
 import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiClient;
 import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiInterface;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +39,7 @@ public class Utils {
         List<Fragment> fragments = fm.getFragments();
         if (fragments != null && fragments.size() > 0) {
             for (Fragment fragment : fragments) {
-                if (fragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
+                if (null!=fragment && null!=fragment.getChildFragmentManager() && fragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
                     if (fragment.getChildFragmentManager().popBackStackImmediate()) {
                         return true;
                     } else {
@@ -55,7 +59,7 @@ public class Utils {
         callChannels.enqueue(new Callback<NewsChannelResponse>() {
             @Override
             public void onResponse(Call<NewsChannelResponse> call, Response<NewsChannelResponse> response) {
-                List<Sources> sources = Arrays.asList(response.body().getSources());
+                final List<Sources> sources =(response.body()==null? new ArrayList<Sources>():Arrays.asList(response.body().getSources()));
 
                 Log.d(TAG, "Number of movies received: " + sources.size());
                 DataSaverTask saverTask = new DataSaverTask(context, response.body());
@@ -63,7 +67,7 @@ public class Utils {
                     @Override
                     public void onDataSave() {
                         if (null != dataUpdateListener) {
-                            dataUpdateListener.onDataRetrieved();
+                            dataUpdateListener.onDataRetrieved(sources);
                         }
 
                     }
@@ -98,14 +102,15 @@ public class Utils {
         call.enqueue(new Callback<NewsResponse>() {
             @Override
             public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
-                List<Articles> movies = Arrays.asList(response.body().getArticles());
-                Log.d(TAG, "Number of movies received: " + movies.size());
+
+                final List<Articles> articlesList =(response.body()==null? new ArrayList<Articles>():Arrays.asList(response.body().getArticles()));
+                Log.d(TAG, "Number of articlesList received: " + articlesList.size());
                 DataSaverTask saverTask = new DataSaverTask(context, response.body());
                 saverTask.setDataSaveListener(new DataSaveListener() {
                     @Override
                     public void onDataSave() {
                         if (null != dataUpdateListener) {
-                            dataUpdateListener.onDataRetrieved();
+                            dataUpdateListener.onDataRetrieved(articlesList);
                         }
 
                     }
@@ -117,8 +122,12 @@ public class Utils {
             public void onFailure(Call<NewsResponse> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
+                String errorMsg="";
+                if (t instanceof IOException){
+                    errorMsg=context.getString(R.string.no_internet_connectivity);
+                };
                 if (null != dataUpdateListener) {
-                    dataUpdateListener.onDataError(t.getMessage());
+                    dataUpdateListener.onDataError(errorMsg);
                 }
             }
         });
@@ -146,5 +155,12 @@ public class Utils {
             newsChannel = context.getString(R.string.channelid_for_business_category);
         }
         return newsChannel;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

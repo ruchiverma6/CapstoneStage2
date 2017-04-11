@@ -12,29 +12,29 @@ import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.R;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
+import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
 import com.squareup.picasso.Picasso;
 
 /**
  * Created by v-ruchd on 3/17/2017.
  */
 
-public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAdapter.ViewHolder> {
+public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
 
 
     private final String[] dataSets;
-    private static OnBrowseContentItemClickListener onBrowseContentItemClickListener;
+    private static OnDataItemClickListener onBrowseContentItemClickListener;
     private Cursor cursor;
     private Context mContext;
 
-    public BrowsedContentAdapter(Context context, String[] dataSets) {
+    public ArticlesAdapter(Context context, String[] dataSets) {
         this.dataSets = dataSets;
         this.mContext = context;
     }
 
     @Override
-    public BrowsedContentAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browsed_content_list_item, parent, false);
+    public ArticlesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.article_content_list_item, parent, false);
 
         ViewHolder vh = new ViewHolder(view);
         return vh;
@@ -73,12 +73,8 @@ public class BrowsedContentAdapter extends RecyclerView.Adapter<BrowsedContentAd
         return this.cursor;
     }
 
-  /*  @Override
-    public int getItemCount() {
-        return dataSets.length;
-    }*/
 
-    public void setRecylerViewItemListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener) {
+    public void setRecylerViewItemListener(OnDataItemClickListener onBrowseContentItemClickListener) {
         this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
     }
 

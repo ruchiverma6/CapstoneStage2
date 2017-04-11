@@ -3,18 +3,26 @@ package com.example.v_ruchd.capstonestage2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
-import com.example.v_ruchd.capstonestage2.fragments.BrowsedContentFragment;
-import com.example.v_ruchd.capstonestage2.fragments.NewDetailFragment;
+import com.example.v_ruchd.capstonestage2.data.NewsContract;
+import com.example.v_ruchd.capstonestage2.fragments.ArticlesFragment;
+import com.example.v_ruchd.capstonestage2.fragments.NewsDetailFragment;
+import com.example.v_ruchd.capstonestage2.helper.AsyncQueryHandlerListener;
+import com.example.v_ruchd.capstonestage2.helper.CustomAsyncQueryHandler;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
+import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -25,11 +33,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
-public class BrowsedContentActivity extends AppCompatActivity implements BrowsedContentFragment.OnFragmentInteractionListener {
-    private static final String TAG = BrowsedContentActivity.class.getSimpleName();
+public class ArticlesActivity extends AppCompatActivity implements ArticlesFragment.OnFragmentInteractionListener {
+    private static final String TAG = ArticlesActivity.class.getSimpleName();
     private static final String DETAILFRAGMENT_TAG = "detailfragment";
     private static final String ARTICLEFRAGMENTTAG = "newsarticletag";
+    private static final int QUERY_ARTICLES = 121;
     private boolean mTwoPane;
     private Context mContext;
 
@@ -37,7 +47,9 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
     private SharedPreferences sharedPref;
     private Tracker mTracker;
 
-
+    private Toolbar toolbar;
+    private TextView titleTextView;
+    private String title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,13 +58,42 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         mTracker = application.getDefaultTracker();
         selectedChannel = getIntent().getStringExtra("selectedchannel");
         setContentView(R.layout.activity_browsed_content);
+
+        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+        titleTextView=(TextView)findViewById(R.id.tool_bar_title);
+
+        title=selectedChannel.substring(0,1).toUpperCase()+selectedChannel.substring(1,selectedChannel.length()) + " " + getString(R.string.news_label);
+        titleTextView.setText(title);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        toolbar = (Toolbar)findViewById(R.id.app_bar);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle(title);
+                    isShow = true;
+                } else if (isShow) {
+                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+                    isShow = false;
+                }
+            }
+        });
+
+        setUpActionBar();
+
       //  setUpActionBar();
         if (findViewById(R.id.news_detail_container) != null) {
 
             mTwoPane = true;
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.news_detail_container, new NewDetailFragment(), DETAILFRAGMENT_TAG)
+                        .replace(R.id.news_detail_container, new NewsDetailFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -71,19 +112,62 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         mTracker.setScreenName("Image~" + screenName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
         final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedChannel);
+       final Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
+        final Fragment newsDetailFragment = getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
         saveSelectedChannel(channelForCategory);
-        Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener() {
+        Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener<Articles>() {
             @Override
-            public void onDataRetrieved() {
-                Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
-                if (null != browseContentFragment && browseContentFragment instanceof BrowsedContentFragment) {
-                    ((BrowsedContentFragment) browseContentFragment).onDataRetrieved(channelForCategory);
+            public void onDataRetrieved(List<Articles> resultList) {
+
+                if (null != browseContentFragment && browseContentFragment instanceof ArticlesFragment) {
+                    ((ArticlesFragment) browseContentFragment).onDataRetrieved(channelForCategory,resultList);
+                }
+
+              if(mTwoPane) {
+
+
+                  CustomAsyncQueryHandler customAsyncQueryHandler=new CustomAsyncQueryHandler(getContentResolver());
+                  customAsyncQueryHandler.setAsyncQueryHandlerListener(new AsyncQueryHandlerListener() {
+                      @Override
+                      public void onInsertComplete(int token, Object cookie, Uri uri) {
+
+                      }
+
+                      @Override
+                      public void onDeleteComplete(int token, Object cookie, int result) {
+
+                      }
+
+                      @Override
+                      public void onQueryComplete(int token, Object cookie, Cursor cursor) {
+                          if (null != cursor && cursor.moveToFirst()) {
+cursor.moveToPosition(0);
+                              String sourceUrl=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
+                              String title=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_TITLE));
+                              Bundle bundle = new Bundle();
+                              bundle.putString(getString(R.string.source_url_key), sourceUrl);
+                              bundle.putString(getString(R.string.title_key), title);
+                              onFragmentInteraction(bundle);
+                          }
+                      }
+
+                      @Override
+                      public void onUpdateComplete(int token, Object cookie, int result) {
+
+                      }
+                  });
+                  customAsyncQueryHandler.startQuery(QUERY_ARTICLES,null, NewsContract.ArticleEntry.buildNewsArticleWithChannel(channelForCategory),null,null,null,null);
+
+
+
                 }
             }
 
             @Override
             public void onDataError(String message) {
-
+                if (null != browseContentFragment && browseContentFragment instanceof ArticlesFragment) {
+                    ((ArticlesFragment) browseContentFragment).onDataError(message);
+                }
             }
         });
     }
@@ -101,12 +185,11 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
      * Method to set up action bar.
      */
     private void setUpActionBar() {
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        ActionBar ab = getSupportActionBar();
+        setSupportActionBar(toolbar);
+      getSupportActionBar().setTitle(" ");
 
-        // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
+
+  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -121,8 +204,8 @@ public class BrowsedContentActivity extends AppCompatActivity implements Browsed
         if (mTwoPane) {
 
 
-            NewDetailFragment fragment = new NewDetailFragment();
-            // fragment.setArguments(args);
+            NewsDetailFragment fragment = new NewsDetailFragment();
+            fragment.setArguments(result);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.news_detail_container, fragment, DETAILFRAGMENT_TAG)

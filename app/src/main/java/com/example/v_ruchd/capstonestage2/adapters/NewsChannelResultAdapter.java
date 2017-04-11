@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.R;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
+import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
 import com.squareup.picasso.Picasso;
 
 
@@ -27,14 +27,14 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
     private final LayoutInflater mLayoutInflater;
     private final Context context;
     private Cursor cursor;
-    private OnBrowseContentItemClickListener onBrowseContentItemClickListener;
+    private OnDataItemClickListener onBrowseContentItemClickListener;
 
     public NewsChannelResultAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
         this.context = context;
     }
 
-    public void setRecyclerViewListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener) {
+    public void setRecyclerViewListener(OnDataItemClickListener onBrowseContentItemClickListener) {
         this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
     }
 

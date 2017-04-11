@@ -11,7 +11,7 @@ import android.os.Build;
 import android.support.v4.app.TaskStackBuilder;
 import android.widget.RemoteViews;
 
-import com.example.v_ruchd.capstonestage2.BrowsedContentActivity;
+import com.example.v_ruchd.capstonestage2.ArticlesActivity;
 import com.example.v_ruchd.capstonestage2.HomeActivity;
 import com.example.v_ruchd.capstonestage2.NewsDetailActivity;
 import com.example.v_ruchd.capstonestage2.R;
@@ -35,7 +35,7 @@ public class NewsListWidgetProvider extends AppWidgetProvider {
                 setRemoteAdapterV11(context, remoteViews);
             }
             boolean useStockGraph=context.getResources().getBoolean(R.bool.news_detail_enabled);
-            Intent clickIntentTemplate=useStockGraph?new Intent(context, NewsDetailActivity.class):new Intent(context, BrowsedContentActivity.class);
+            Intent clickIntentTemplate=useStockGraph?new Intent(context, NewsDetailActivity.class):new Intent(context, ArticlesActivity.class);
             PendingIntent clickPendingIntentTemplate= TaskStackBuilder.create(context).addNextIntentWithParentStack(clickIntentTemplate).getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setPendingIntentTemplate(R.id.widget_list,clickPendingIntentTemplate);
             remoteViews.setEmptyView(R.id.widget_list, R.id.widget_empty);

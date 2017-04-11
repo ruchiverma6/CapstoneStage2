@@ -10,7 +10,7 @@ import android.widget.Button;
 
 import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.R;
-import com.example.v_ruchd.capstonestage2.listener.OnBrowseContentItemClickListener;
+import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
 
 /**
  * Created by v-ruchd on 3/24/2017.
@@ -22,7 +22,7 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
     private String[] mInpuSelectionEnteries;
     private final LayoutInflater mLayoutInflater;
     //private Cursor cursor;
-    private OnBrowseContentItemClickListener onBrowseContentItemClickListener;
+    private OnDataItemClickListener onBrowseContentItemClickListener;
     private int isAlreadyClicked;
 
     public void setMessageId(String messageId,int isClickable) {
@@ -38,7 +38,7 @@ public class InputSelectionAdapter extends RecyclerView.Adapter<InputSelectionAd
         mInpuSelectionEnteries = context.getResources().getStringArray(R.array.inputcategoryselectionenteries);
     }
 
-    public void setRecyclerViewListener(OnBrowseContentItemClickListener onBrowseContentItemClickListener) {
+    public void setRecyclerViewListener(OnDataItemClickListener onBrowseContentItemClickListener) {
         this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
     }
 

@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">NEWS BOT</string>
+    <string name="app_name">News Bot</string>
     <string name="loading_text">Loading</string>
     <string name="clear">Clear</string>
-    <string name="browsed_content">NEWS</string>
+    <string name="news_label">News</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -58,4 +58,6 @@
     <string name="news_article_list">NewsArticleList</string>
     <string name="news_detail">NewsDetail</string>
     <string name="news_logo_icon">News Article Logo</string>
+    <string name="no_data_available">Unable to retrieve data. Please try agin later.</string>
+    <string name="no_internet_connectivity">No Internet. Please connect to internet.</string>
 </resources>
