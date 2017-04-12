@@ -13,7 +13,7 @@
         android:layout_weight="1"
         android:layout_marginLeft="10dp"
 android:layout_marginRight="2dp"
-        android:text="Item1fgfgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg" />
+      />
 
 
     <ImageView android:id="@+id/news_image_logo"
@@ -23,5 +23,5 @@ android:layout_marginRight="2dp"
         android:layout_gravity="right|center_vertical"
         android:layout_marginRight="10dp"
         android:contentDescription="@string/news_logo_icon"
-        android:src="@drawable/ic_launcher"/>
+      />
 </LinearLayout>

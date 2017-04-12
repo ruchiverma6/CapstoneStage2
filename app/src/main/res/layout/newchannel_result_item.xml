@@ -11,9 +11,7 @@
         android:src="@drawable/logo_sample"
         android:layout_width="180dp"
         android:padding="15dp"
-
         android:layout_height="160dp"
-        android:text="item1dsfc  sfsfsffsfsfsfsf"
         android:gravity="center_vertical"/>
 
 

@@ -114,7 +114,7 @@ public class NewsListFragment extends Fragment implements OnDataItemClickListene
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
-
+        mAdapter=new NewsListAdapter(mActivity);
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);

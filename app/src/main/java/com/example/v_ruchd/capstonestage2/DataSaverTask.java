@@ -98,17 +98,17 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
         for (ChatMessage resultData : chatMessages) {
             ContentValues contentValuesMovies = new ContentValues();
             String messageId = "";
-            if (resultData.getFrom().equals("user")) {
+            if (resultData.getFrom().equals(mContext.getString(R.string.user))) {
                 totalMessageLengthForUser += 1;
-                messageId = "user:" + totalMessageLengthForUser;
-            } else if (resultData.getFrom().equals("bot")) {
+                messageId = resultData.getFrom()+":" + totalMessageLengthForUser;
+            } else if (resultData.getFrom().equals(mContext.getString(R.string.bot))) {
                 totalMessageLengthForBot += 1;
-                messageId = "bot:" + totalMessageLengthForBot;
+                messageId = resultData.getFrom()+":" + totalMessageLengthForBot;
             }
             contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID, messageId);
             contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT, resultData.getMessage());
 
-            if(resultData.getMessage().contains("inputcategory")){
+            if(resultData.getMessage().contains(mContext.getString(R.string.input_category))){
                 String data[]=  resultData.getMessage().split(":");
                 mSelectedCategoryEntries.put(messageId,data[1]);
 
@@ -130,8 +130,7 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
         saveTotalMesgthLengthPerUser(totalMessageLengthForUser, totalMessageLengthForBot);
 
          saveSelectedCategoryEnteries(mSelectedCategoryEntries);
-        Cursor cursor = mContext.getContentResolver().query(NewsContract.MessageEntry.CONTENT_URI, null, null, null, null);
-        cursor.getCount();
+
     }
 
     private void saveSelectedCategoryEnteries(HashMap<String, String> mSelectedCategoryEntries) {
@@ -151,12 +150,12 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
 
         Vector<ContentValues> contentValuesVectorTotalLength = new Vector<>(2);
         ContentValues contentValuesForUser = new ContentValues();
-        contentValuesForUser.put(NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM, "user");
+        contentValuesForUser.put(NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM, mContext.getString(R.string.user));
         contentValuesForUser.put(NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_TOTAL_LENGTH, totalMessageLengthForUser);
         contentValuesVectorTotalLength.add(contentValuesForUser);
 
         ContentValues contentValuesForBot = new ContentValues();
-        contentValuesForBot.put(NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM, "bot");
+        contentValuesForBot.put(NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM, mContext.getString(R.string.bot));
         contentValuesForBot.put(NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_TOTAL_LENGTH, totalMessageLengthForBot);
         contentValuesVectorTotalLength.add(contentValuesForBot);
         ContentValues[] contentValuesArray = contentValuesVectorTotalLength.toArray(new ContentValues[contentValuesVectorTotalLength.size()]);
@@ -215,8 +214,7 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
             ContentValues[] contentValuesArray = contentValuesVectorCategoryType.toArray(new ContentValues[contentValuesVectorCategoryType.size()]);
             mContext.getContentResolver().bulkInsert(NewsContract.CategoryEntry.CONTENT_URI, contentValuesArray);
         }
-        Cursor cursor = mContext.getContentResolver().query(NewsContract.NewsChannelEntry.buildNewsChannelWithCategory("sport"), null, null, null, null);
-        cursor.getCount();
+
     }
 
 }

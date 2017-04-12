@@ -22,13 +22,13 @@ import com.squareup.picasso.Picasso;
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHolder> {
 
 
-    private final String[] dataSets;
+
     private static OnDataItemClickListener onBrowseContentItemClickListener;
     private Cursor cursor;
     private Context mContext;
 
-    public NewsListAdapter(Context context, String[] dataSets) {
-        this.dataSets = dataSets;
+    public NewsListAdapter(Context context) {
+
         this.mContext = context;
     }
 
