@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.R;
-import com.example.v_ruchd.capstonestage2.adapters.ArticlesAdapter;
+import com.example.v_ruchd.capstonestage2.adapters.NewsListAdapter;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
 import com.example.v_ruchd.capstonestage2.modal.Articles;
@@ -32,20 +32,20 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ArticlesFragment.OnFragmentInteractionListener} interface
+ * {@link NewsListFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ArticlesFragment#newInstance} factory method to
+ * Use the {@link NewsListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ArticlesFragment extends Fragment implements OnDataItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class NewsListFragment extends Fragment implements OnDataItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
 
-    private static final String TAG = ArticlesFragment.class.getSimpleName();
+    private static final String TAG = NewsListFragment.class.getSimpleName();
     private static final int NEWS_LOADER = 0;
     private RecyclerView mRecyclerView;
-    private ArticlesAdapter mAdapter;
+    private NewsListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private String[] dataSets = new String[13];
+
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -65,7 +65,7 @@ public class ArticlesFragment extends Fragment implements OnDataItemClickListene
 
     private ProgressDialog mProgressDialog;
 
-    public ArticlesFragment() {
+    public NewsListFragment() {
         // Required empty public constructor
     }
 
@@ -75,11 +75,11 @@ public class ArticlesFragment extends Fragment implements OnDataItemClickListene
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ArticlesFragment.
+     * @return A new instance of fragment NewsListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ArticlesFragment newInstance(String param1, String param2) {
-        ArticlesFragment fragment = new ArticlesFragment();
+    public static NewsListFragment newInstance(String param1, String param2) {
+        NewsListFragment fragment = new NewsListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -105,23 +105,7 @@ public class ArticlesFragment extends Fragment implements OnDataItemClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_article_content, container, false);
-
-        dataSets[0] = "Item1";
-        dataSets[1] = "Item2";
-        dataSets[2] = "Item3";
-        dataSets[3] = "Item4";
-        dataSets[4] = "Item5";
-        dataSets[5] = "Item6";
-        dataSets[6] = "Item7";
-        dataSets[7] = "Item8";
-        dataSets[8] = "Item9";
-        dataSets[9] = "Item10";
-        dataSets[10] = "Item11";
-        dataSets[11] = "Item12";
-        dataSets[12] = "Item13";
-
-
+        View view = inflater.inflate(R.layout.fragment_news_layout, container, false);
         emptyDataTextView=(TextView)view.findViewById(R.id.empty_view);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyler_view);
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
@@ -134,9 +118,6 @@ public class ArticlesFragment extends Fragment implements OnDataItemClickListene
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(mActivity);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
-        mAdapter = new ArticlesAdapter(mActivity, dataSets);
         mAdapter.setRecylerViewItemListener(this);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -161,7 +142,7 @@ public class ArticlesFragment extends Fragment implements OnDataItemClickListene
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-     //   ((ArticlesActivity) mActivity).setActionBarTitle(getString(R.string.browsed_content));
+
         getLoaderManager().initLoader(NEWS_LOADER, null, this);
     }
 
@@ -213,6 +194,7 @@ public class ArticlesFragment extends Fragment implements OnDataItemClickListene
     }
 
     public void onDataError(String message) {
+        stopProgressDialog();
         emptyDataTextView.setVisibility(View.VISIBLE);
         emptyDataTextView.setText(message);
     }

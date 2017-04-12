@@ -34,9 +34,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, DataSaveListener {
+public class ChatActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, DataSaveListener {
     private static final int MESSAGE_LOADER = 1;
-    private static final String TAG = HomeActivity.class.getSimpleName();
+    private static final String TAG = ChatActivity.class.getSimpleName();
     private EditText messageET;
     private RecyclerView messagesContainer;
     private Button sendBtn;
@@ -49,13 +49,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_chat);
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getString(R.string.addunitid));
         getSupportLoaderManager().initLoader(
-                MESSAGE_LOADER, null, HomeActivity.this);
+                MESSAGE_LOADER, null, ChatActivity.this);
         setUpActionBar();
         initComponents();
 
@@ -75,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     private void initComponents() {
 
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
-        adapter = new ChatAdapter(HomeActivity.this, new ArrayList<ChatMessage>());
+        adapter = new ChatAdapter(ChatActivity.this, new ArrayList<ChatMessage>());
         messagesContainer.setAdapter(adapter);
 
         mLayoutManager = new LinearLayoutManager(this);
@@ -88,15 +88,15 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onClick(View v) {
                 mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Action")
-                        .setAction("sendmessage")
+                        .setCategory(getString(R.string.action))
+                        .setAction(getString(R.string.send_message_action))
                         .build());
                 String messageText = messageET.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
                     return;
                 }
-                if(!Utils.isNetworkAvailable(HomeActivity.this)){
-                    Toast.makeText(HomeActivity.this,getString(R.string.no_internet_connectivity),Toast.LENGTH_LONG).show();
+                if(!Utils.isNetworkAvailable(ChatActivity.this)){
+                    Toast.makeText(ChatActivity.this,getString(R.string.no_internet_connectivity),Toast.LENGTH_LONG).show();
                     return;
                 }
                 processentMessageFromUser(messageText);
@@ -109,11 +109,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 messageET.setText("");
                 ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
                 chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
-                DataSaverTask saverTask = new DataSaverTask(HomeActivity.this, chatMessageResponse);
+                DataSaverTask saverTask = new DataSaverTask(ChatActivity.this, chatMessageResponse);
                 saverTask.setDataSaveListener(new DataSaveListener() {
                     @Override
                     public void onDataSave() {
-                        getSupportLoaderManager().restartLoader(MESSAGE_LOADER, null, HomeActivity.this);
+                        getSupportLoaderManager().restartLoader(MESSAGE_LOADER, null, ChatActivity.this);
                     }
                 });
                 saverTask.execute();
@@ -136,11 +136,11 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
                 ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
                 chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
 
-                DataSaverTask saverTask = new DataSaverTask(HomeActivity.this, chatMessageResponse);
+                DataSaverTask saverTask = new DataSaverTask(ChatActivity.this, chatMessageResponse);
                 saverTask.setDataSaveListener(new DataSaveListener() {
                     @Override
                     public void onDataSave() {
-                        getSupportLoaderManager().restartLoader(MESSAGE_LOADER, null, HomeActivity.this);
+                        getSupportLoaderManager().restartLoader(MESSAGE_LOADER, null, ChatActivity.this);
                     }
                 });
                 saverTask.execute();
@@ -194,13 +194,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-    public void onChannelection(String selectedData) {
+    public void onChannelSelection(String selectedData) {
         mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("viewnewsresult")
+                .setCategory(getString(R.string.action))
+                .setAction(getString(R.string.newsresult))
                 .build());
-        Intent intent = new Intent(HomeActivity.this, ArticlesActivity.class);
-        intent.putExtra("selectedchannel", selectedData);
+        Intent intent = new Intent(ChatActivity.this, NewsListActivity.class);
+        intent.putExtra(getString(R.string.selected_channel_key), selectedData);
         startActivity(intent);
     }
 

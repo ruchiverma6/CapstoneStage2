@@ -21,8 +21,8 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".ArticlesActivity"
+        <activity android:name=".ChatActivity" />
+        <activity android:name=".NewsListActivity"
             />
         <activity android:name=".NewsDetailActivity"
            ></activity>

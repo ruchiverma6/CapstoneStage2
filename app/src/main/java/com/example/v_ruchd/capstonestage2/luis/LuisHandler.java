@@ -86,19 +86,7 @@ public class LuisHandler {
                         ) {
                     final String selectedData = luisEntity.getName();
                     luisDataUpdateListener.onLuisDataUpdate("inputcategory:" + selectedData, ChatAdapter.TYPE_NEWS_CHANNELS_RESULT);
-                 /*   Utils.fetchNewsChannelsResponse(context, selectedData, new DataUpdateListener<Sources>() {
 
-                        @Override
-                        public void onDataRetrieved(List<Sources> sources) {
-                            luisDataUpdateListener.onLuisDataUpdate("inputcategory:" + selectedData, ChatAdapter.TYPE_NEWS_CHANNELS_RESULT);
-                        }
-
-                        @Override
-                        public void onDataError(String message) {
-
-                        }
-
-                    });*/
                     return;
                 }
             }
@@ -120,7 +108,7 @@ public class LuisHandler {
     private String getGreetingMsg() {
         String[] greetingMsgArray = context.getResources().getStringArray(R.array.greeting_msges_from_bot);
         int idx = new Random().nextInt(greetingMsgArray.length);
-        return (greetingMsgArray[idx]);
+        return (context.getString(R.string.select_category_msg));
 
     }
 }

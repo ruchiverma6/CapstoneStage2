@@ -42,7 +42,7 @@
     <string name="channelid_for_sport_category">espn</string>
     <string name="channelid_for_technology_category">hacker-news</string>
     <string name="channelid_for_business_category">the-economist</string>
-    <string name="select_category_msg">You can select news for Sports, General, Entertainment, Buisness, Gaming, Music, Technology, Science-and-nature and Politics.</string>
+    <string name="select_category_msg">Hi m your friendly bot. You can ask news for Sports, General, Entertainment, Buisness, Gaming, Music, Technology, Science-and-nature and Politics.</string>
     <string name="bot">bot</string>
     <string name="conversation_start_message">Hi</string>
     <string name="preference_file_key">myprefs</string>
@@ -60,4 +60,8 @@
     <string name="news_logo_icon">News Article Logo</string>
     <string name="no_data_available">Unable to retrieve data. Please try agin later.</string>
     <string name="no_internet_connectivity">No Internet. Please connect to internet.</string>
+    <string name="selected_channel_key">selectedchannel</string>
+    <string name="action">Action</string>
+    <string name="newsresult">viewnewsresult</string>
+    <string name="send_message_action">sendmessage</string>
 </resources>

@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.fragments.ArticlesFragment;
+import com.example.v_ruchd.capstonestage2.fragments.NewsListFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewsDetailFragment;
 import com.example.v_ruchd.capstonestage2.helper.AsyncQueryHandlerListener;
 import com.example.v_ruchd.capstonestage2.helper.CustomAsyncQueryHandler;
@@ -35,8 +35,8 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
-public class ArticlesActivity extends AppCompatActivity implements ArticlesFragment.OnFragmentInteractionListener {
-    private static final String TAG = ArticlesActivity.class.getSimpleName();
+public class NewsListActivity extends AppCompatActivity implements NewsListFragment.OnFragmentInteractionListener {
+    private static final String TAG = NewsListActivity.class.getSimpleName();
     private static final String DETAILFRAGMENT_TAG = "detailfragment";
     private static final String ARTICLEFRAGMENTTAG = "newsarticletag";
     private static final int QUERY_ARTICLES = 121;
@@ -56,8 +56,8 @@ public class ArticlesActivity extends AppCompatActivity implements ArticlesFragm
         mContext = this;
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
-        selectedChannel = getIntent().getStringExtra("selectedchannel");
-        setContentView(R.layout.activity_browsed_content);
+        selectedChannel = getIntent().getStringExtra(getString(R.string.selected_channel_key));
+        setContentView(R.layout.activity_news_layout);
 
         final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
         titleTextView=(TextView)findViewById(R.id.tool_bar_title);
@@ -79,15 +79,13 @@ public class ArticlesActivity extends AppCompatActivity implements ArticlesFragm
                     collapsingToolbarLayout.setTitle(title);
                     isShow = true;
                 } else if (isShow) {
-                    collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+                    collapsingToolbarLayout.setTitle(" ");
                     isShow = false;
                 }
             }
         });
 
         setUpActionBar();
-
-      //  setUpActionBar();
         if (findViewById(R.id.news_detail_container) != null) {
 
             mTwoPane = true;
@@ -119,8 +117,8 @@ public class ArticlesActivity extends AppCompatActivity implements ArticlesFragm
             @Override
             public void onDataRetrieved(List<Articles> resultList) {
 
-                if (null != browseContentFragment && browseContentFragment instanceof ArticlesFragment) {
-                    ((ArticlesFragment) browseContentFragment).onDataRetrieved(channelForCategory,resultList);
+                if (null != browseContentFragment && browseContentFragment instanceof NewsListFragment) {
+                    ((NewsListFragment) browseContentFragment).onDataRetrieved(channelForCategory,resultList);
                 }
 
               if(mTwoPane) {
@@ -165,8 +163,8 @@ cursor.moveToPosition(0);
 
             @Override
             public void onDataError(String message) {
-                if (null != browseContentFragment && browseContentFragment instanceof ArticlesFragment) {
-                    ((ArticlesFragment) browseContentFragment).onDataError(message);
+                if (null != browseContentFragment && browseContentFragment instanceof NewsListFragment) {
+                    ((NewsListFragment) browseContentFragment).onDataError(message);
                 }
             }
         });
@@ -233,11 +231,8 @@ cursor.moveToPosition(0);
 
             case android.R.id.home:
                 onBackPressed();
-                exportDatabse("news");
                 return true;
-            case R.id.clear_menu_item:
-                copyDBToSDCard();
-                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

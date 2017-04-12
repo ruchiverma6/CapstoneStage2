@@ -19,7 +19,7 @@ import com.squareup.picasso.Picasso;
  * Created by v-ruchd on 3/17/2017.
  */
 
-public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
+public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHolder> {
 
 
     private final String[] dataSets;
@@ -27,14 +27,14 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     private Cursor cursor;
     private Context mContext;
 
-    public ArticlesAdapter(Context context, String[] dataSets) {
+    public NewsListAdapter(Context context, String[] dataSets) {
         this.dataSets = dataSets;
         this.mContext = context;
     }
 
     @Override
-    public ArticlesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.article_content_list_item, parent, false);
+    public NewsListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.news_content_list_item, parent, false);
 
         ViewHolder vh = new ViewHolder(view);
         return vh;

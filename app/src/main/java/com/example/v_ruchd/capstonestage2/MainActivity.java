@@ -119,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Method to start HomeActivity.
+     * Method to start ChatActivity.
      */
     private void startHomeActivity() {
-        Intent homeActivityIntent = new Intent(this, HomeActivity.class);
+        Intent homeActivityIntent = new Intent(this, ChatActivity.class);
         startActivity(homeActivityIntent);
     }
 

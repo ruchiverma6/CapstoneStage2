@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.v_ruchd.capstonestage2.ChatActivity;
 import com.example.v_ruchd.capstonestage2.Constants;
-import com.example.v_ruchd.capstonestage2.HomeActivity;
 import com.example.v_ruchd.capstonestage2.R;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.helper.AsyncQueryHandlerListener;
@@ -86,12 +86,12 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_USER:
-                View v1 = inflater.inflate(R.layout.item_chat_left, parent, false);
+                View v1 = inflater.inflate(R.layout.item_chat_user, parent, false);
                 viewHolder = new UserMessageViewHolder(v1);
                 break;
 
             case TYPE_BOT:
-                View userMessageViewHolder = inflater.inflate(R.layout.item_chat_right, parent, false);
+                View userMessageViewHolder = inflater.inflate(R.layout.item_chat_bot, parent, false);
                 viewHolder = new BOTMessageViewHolder(userMessageViewHolder);
                 break;
 
@@ -136,7 +136,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 if (cursor.moveToFirst()) {
                     selectedCategoryForNewsResult = cursor.getString(cursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
                 }
-                ((HomeActivity) context).onChannelection(selectedCategoryForNewsResult);
+                ((ChatActivity) context).onChannelSelection(selectedCategoryForNewsResult);
                 break;
         }
     }
@@ -216,7 +216,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                         if (selectedCategoryCursor.moveToFirst()) {
                             selectedCategory = selectedCategoryCursor.getString(selectedCategoryCursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
                         }
-                        ((HomeActivity) context).onChannelection(selectedCategory);*/
+                        ((ChatActivity) context).onChannelSelection(selectedCategory);*/
                     }
                 });
 
@@ -312,7 +312,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
             case Constants.NEWCHANNELREULT_CATEGORY_TYPE:
                 Toast.makeText(context, "clicked item position " + position, Toast.LENGTH_LONG).show();
-                ((HomeActivity) context).onChannelection(selectedData);
+                ((ChatActivity) context).onChannelSelection(selectedData);
                 break;
             default:
                 break;

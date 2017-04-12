@@ -33,7 +33,7 @@ public class NewsDetailFragment extends Fragment {
     private ProgressDialog mProgressDialog;
 
     public NewsDetailFragment() {
-        // Required empty public constructor
+
     }
 
 

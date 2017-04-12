@@ -64,7 +64,7 @@
 
         <fragment
             android:id="@+id/fragment_browse_content"
-            android:name="com.example.v_ruchd.capstonestage2.fragments.ArticlesFragment"
+            android:name="com.example.v_ruchd.capstonestage2.fragments.NewsListFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
