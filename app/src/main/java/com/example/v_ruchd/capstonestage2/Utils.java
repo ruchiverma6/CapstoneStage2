@@ -1,6 +1,9 @@
 package com.example.v_ruchd.capstonestage2;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
@@ -16,6 +19,7 @@ import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
 import com.example.v_ruchd.capstonestage2.modal.Sources;
 import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiClient;
 import com.example.v_ruchd.capstonestage2.retrofitcalls.ApiInterface;
+import com.example.v_ruchd.capstonestage2.widget.NewsListWidgetProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -109,7 +113,7 @@ public class Utils {
                 saverTask.setDataSaveListener(new DataSaveListener() {
                     @Override
                     public void onDataSave() {
-
+sendBroadCastToWodget(context);
                         if (null != dataUpdateListener) {
                             dataUpdateListener.onDataRetrieved(articlesList);
                         }
@@ -132,6 +136,20 @@ public class Utils {
                 }
             }
         });
+    }
+
+    private static void sendBroadCastToWodget(Context context) {
+        Intent intentWidget = new Intent(context,NewsListWidgetProvider.class);
+        intentWidget.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        ComponentName thisWidget = new ComponentName(context,
+                NewsListWidgetProvider.class);
+        int[] allWidgetIds = AppWidgetManager.getInstance(context).getAppWidgetIds(thisWidget);
+// Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+// since it seems the onUpdate() is only fired on that:
+      /*  int[] ids = {AppWidgetManager.EXTRA_APPWIDGET_ID};*/
+        intentWidget.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,allWidgetIds);
+        context.sendBroadcast(intentWidget);
     }
 
 

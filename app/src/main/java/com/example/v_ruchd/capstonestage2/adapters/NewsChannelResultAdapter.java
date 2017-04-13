@@ -2,14 +2,12 @@ package com.example.v_ruchd.capstonestage2.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.v_ruchd.capstonestage2.Constants;
 import com.example.v_ruchd.capstonestage2.R;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
@@ -34,9 +32,6 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
         this.context = context;
     }
 
-    public void setRecyclerViewListener(OnDataItemClickListener onBrowseContentItemClickListener) {
-        this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
-    }
 
 
     public void swapCursor(final Cursor cursor) {
@@ -74,36 +69,19 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
         Picasso.with(context).load(logoUrl).into(holder.mChannelLogo);
     }
 
-    public void setSelectedCategory(String selectedCategory) {
-
-    }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    public class ViewHolder extends RecyclerView.ViewHolder  {
 
         public ImageView mChannelLogo;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mChannelLogo = (ImageView) itemView.findViewById(R.id.channel_logo_imageview);
-            mChannelLogo.setOnClickListener(this);
+
         }
 
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            cursor = getItem(position);
-
-            String selectedChannel = cursor.getString(cursor.getColumnIndex(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID));
-
-
-            Bundle bundle = new Bundle();
-            bundle.putInt("viewtype", Constants.NEWCHANNELREULT_CATEGORY_TYPE);
-            bundle.putString("selecteddata", selectedChannel);
-            if (null != onBrowseContentItemClickListener) {
-                onBrowseContentItemClickListener.onClick(v, position, bundle);
-            }
-        }
     }
 }
 

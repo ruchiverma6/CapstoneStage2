@@ -66,7 +66,7 @@ public class ChatActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onResume() {
         super.onResume();
-        String screenName=getString(R.string.chat_screen);
+        String screenName = getString(R.string.chat_screen);
         Log.i(TAG, "Setting screen name: " + screenName);
         mTracker.setScreenName("Image~" + screenName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
@@ -96,8 +96,8 @@ public class ChatActivity extends AppCompatActivity implements LoaderManager.Loa
                 if (TextUtils.isEmpty(messageText)) {
                     return;
                 }
-                if(!Utils.isNetworkAvailable(ChatActivity.this)){
-                    Toast.makeText(ChatActivity.this,getString(R.string.no_internet_connectivity),Toast.LENGTH_LONG).show();
+                if (!Utils.isNetworkAvailable(ChatActivity.this)) {
+                    Toast.makeText(ChatActivity.this, getString(R.string.no_internet_connectivity), Toast.LENGTH_LONG).show();
                     return;
                 }
                 processentMessageFromUser(messageText);
@@ -164,8 +164,6 @@ public class ChatActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri = NewsContract.MessageEntry.CONTENT_URI;
@@ -195,17 +193,21 @@ public class ChatActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-    public void onChannelSelection(String selectedData) {
+    public void onCategorySelection(String selectedData) {
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory(getString(R.string.action))
                 .setAction(getString(R.string.newsresult))
                 .build());
         Intent intent = new Intent(ChatActivity.this, NewsListActivity.class);
         intent.putExtra(getString(R.string.selected_channel_key), selectedData);
-        Bundle bundle= ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
+        Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
 
-        startActivity(intent,bundle);
+        startActivity(intent, bundle);
+
+
     }
+
+
 
 
 }

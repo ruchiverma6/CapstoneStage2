@@ -15,6 +15,7 @@ import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.v_ruchd.capstonestage2.R;
+import com.example.v_ruchd.capstonestage2.Utils;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
 
 import java.io.IOException;
@@ -44,7 +45,8 @@ public class NewsWidgetRemoteViewService extends RemoteViewsService {
                 }
                 final long identityToken = Binder.clearCallingIdentity();
                 String selectedChannel=  retriveSavedSelectedChannel();
-                Uri uri = NewsContract.ArticleEntry.buildNewsArticleWithChannel(selectedChannel);
+                String selectedChannelIdForCategory= Utils.retrieveChannelForCategory(NewsWidgetRemoteViewService.this,selectedChannel);
+                Uri uri = NewsContract.ArticleEntry.buildNewsArticleWithChannel(selectedChannelIdForCategory);
                 data = getContentResolver().query(uri,
                         null,
                         null, null, null);

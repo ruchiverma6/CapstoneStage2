@@ -11,12 +11,25 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        myconfig {
+            keyAlias 'newsbotkey'
+            keyPassword 'Password@123'
+            storeFile file('../keystore.jks')
+            storePassword 'Password@123'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
+
+            signingConfig signingConfigs.myconfig
+
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {

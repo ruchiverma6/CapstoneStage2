@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -28,45 +27,65 @@ import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.util.List;
 
 public class NewsListActivity extends AppCompatActivity implements NewsListFragment.OnFragmentInteractionListener {
     private static final String TAG = NewsListActivity.class.getSimpleName();
     private static final String DETAILFRAGMENT_TAG = "detailfragment";
-    private static final String ARTICLEFRAGMENTTAG = "newsarticletag";
+    private static final String NEWSLISTFRAGMENTTAG = "newsarticletag";
     private static final int QUERY_ARTICLES = 121;
     private boolean mTwoPane;
     private Context mContext;
 
-    public String selectedChannel;
+    public String selectedNewsCategory;
     private SharedPreferences sharedPref;
     private Tracker mTracker;
 
     private Toolbar toolbar;
     private TextView titleTextView;
     private String title;
+    private SharedPreferences mSharedPreferences;
+    AnalyticsApplication application;
+     CollapsingToolbarLayout collapsingToolbarLayout;
+    AppBarLayout appBarLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = this;
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-        selectedChannel = getIntent().getStringExtra(getString(R.string.selected_channel_key));
         setContentView(R.layout.activity_news_layout);
+        mContext = this;
+        initComponents();
+        if (findViewById(R.id.news_detail_container) != null) {
 
-        final CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.news_detail_container, new NewsDetailFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
+
+
+    }
+
+    private void initComponents() {
+        mSharedPreferences=getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+        selectedNewsCategory = getIntent().getStringExtra(getString(R.string.selected_channel_key));
+        if(selectedNewsCategory ==null){
+            selectedNewsCategory =mSharedPreferences.getString(getString(R.string.selected_channel_for_news_result),getString(R.string.channelid_for_general_category));
+        }
+        saveSelectedNewsCategory(selectedNewsCategory);
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
         titleTextView=(TextView)findViewById(R.id.tool_bar_title);
-
-        title=selectedChannel.substring(0,1).toUpperCase()+selectedChannel.substring(1,selectedChannel.length()) + " " + getString(R.string.news_label);
+        if(null!= selectedNewsCategory) {
+            title = selectedNewsCategory.substring(0, 1).toUpperCase() + selectedNewsCategory.substring(1, selectedNewsCategory.length()) + " " + getString(R.string.news_label);
+        }
         titleTextView.setText(title);
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
         toolbar = (Toolbar)findViewById(R.id.app_bar);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
@@ -88,19 +107,6 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         });
 
         setUpActionBar();
-        if (findViewById(R.id.news_detail_container) != null) {
-
-            mTwoPane = true;
-            if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.news_detail_container, new NewsDetailFragment(), DETAILFRAGMENT_TAG)
-                        .commit();
-            }
-        } else {
-            mTwoPane = false;
-        }
-
-
     }
 
 
@@ -111,16 +117,15 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         Log.i(TAG, "Setting screen name: " + screenName);
         mTracker.setScreenName("Image~" + screenName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-        final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedChannel);
-       final Fragment browseContentFragment = getSupportFragmentManager().findFragmentByTag(ARTICLEFRAGMENTTAG);
-        final Fragment newsDetailFragment = getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
-        saveSelectedChannel(channelForCategory);
+        final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedNewsCategory);
+       final Fragment newsListFragment = getSupportFragmentManager().findFragmentByTag(NEWSLISTFRAGMENTTAG);
+
         Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener<Articles>() {
             @Override
             public void onDataRetrieved(List<Articles> resultList) {
 
-                if (null != browseContentFragment && browseContentFragment instanceof NewsListFragment) {
-                    ((NewsListFragment) browseContentFragment).onDataRetrieved(channelForCategory,resultList);
+                if (null != newsListFragment && newsListFragment instanceof NewsListFragment) {
+                    ((NewsListFragment) newsListFragment).onDataRetrieved(channelForCategory,resultList);
                 }
 
               if(mTwoPane) {
@@ -141,7 +146,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
                       @Override
                       public void onQueryComplete(int token, Object cookie, Cursor cursor) {
                           if (null != cursor && cursor.moveToFirst()) {
-cursor.moveToPosition(0);
+                                   cursor.moveToPosition(0);
                               String sourceUrl=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
                               String title=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_TITLE));
                               Bundle bundle = new Bundle();
@@ -165,18 +170,17 @@ cursor.moveToPosition(0);
 
             @Override
             public void onDataError(String message) {
-                if (null != browseContentFragment && browseContentFragment instanceof NewsListFragment) {
-                    ((NewsListFragment) browseContentFragment).onDataError(message);
+                if (null != newsListFragment && newsListFragment instanceof NewsListFragment) {
+                    ((NewsListFragment) newsListFragment).onDataError(message);
                 }
             }
         });
     }
 
-    private void saveSelectedChannel(String channelForCategory) {
-        sharedPref = mContext.getSharedPreferences(
-                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.selected_channel_for_news_result), channelForCategory);
+    private void saveSelectedNewsCategory(String newsCategory) {
+
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString(getString(R.string.selected_channel_for_news_result), newsCategory);
         editor.commit();
     }
 
@@ -193,10 +197,6 @@ cursor.moveToPosition(0);
     }
 
 
-    public void setActionBarTitle(String title) {
-        String formattedTitle = selectedChannel + " " + title;
-        getSupportActionBar().setTitle(formattedTitle.toUpperCase());
-    }
 
 
     @Override
@@ -240,64 +240,7 @@ cursor.moveToPosition(0);
         return super.onOptionsItemSelected(item);
     }
 
-    public void copyDBToSDCard() {
-        try {
-            String DATABASE_NAME = "news";///data/data/com.example.v_ruchd.capstonestage2/databases/news.db
-            InputStream myInput = new FileInputStream("/data/data/com.example.v_ruchd.capstonestage2/databases/" + DATABASE_NAME);
 
-            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" + DATABASE_NAME);
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    Log.i("FO", "File creation failed for " + file);
-                }
-            }
-
-            OutputStream myOutput = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + "/" + DATABASE_NAME);
-
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = myInput.read(buffer)) > 0) {
-                myOutput.write(buffer, 0, length);
-            }
-
-            //Close the streams
-            myOutput.flush();
-            myOutput.close();
-            myInput.close();
-            Log.i("FO", "copied");
-
-        } catch (Exception e) {
-            Log.i("FO", "exception=" + e);
-        }
-
-
-    }
-
-    public void exportDatabse(String databaseName) {
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-
-            if (sd.canWrite()) {
-                String currentDBPath = "//data//" + getPackageName() + "//databases//" + databaseName + ".db";
-                String backupDBPath = "backupnamenews.db";
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
-
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                }
-            }
-        } catch (Exception e) {
-
-        }
-    }
 
 
 
