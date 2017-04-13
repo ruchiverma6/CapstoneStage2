@@ -11,9 +11,7 @@ import com.example.v_ruchd.capstonestage2.modal.Articles;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
 import com.example.v_ruchd.capstonestage2.modal.Data;
-import com.example.v_ruchd.capstonestage2.modal.NewsChannelResponse;
 import com.example.v_ruchd.capstonestage2.modal.NewsResponse;
-import com.example.v_ruchd.capstonestage2.modal.Sources;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,18 +56,12 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void saveDataInDb() {
-        if (resultData instanceof NewsChannelResponse) {
-            List<Sources> sources = Arrays.asList(((NewsChannelResponse) resultData).getSources());
-
-            saveSourceChannels(sources);
-
-
-        } else if (resultData instanceof NewsResponse) {
+       if (resultData instanceof NewsResponse) {
             String sourceId = ((NewsResponse) resultData).getSource();
             List<Articles> articles = Arrays.asList(((NewsResponse) resultData).getArticles());
             saveArticles(articles, sourceId);
         } else if (resultData instanceof ChatMessageResponse) {
-            //   String sourceId=((ChatMessageResponse) resultData).getChat;
+
             List<ChatMessage> chatMessages = Arrays.asList(((ChatMessageResponse) resultData).getChatMessages());
             saveMessages(chatMessages);
         }
@@ -185,36 +177,5 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
 
     }
 
-    private void saveSourceChannels(List<Sources> sources) {
-        Vector<ContentValues> contentValuesVector = new Vector<>(sources.size());
-        Vector<ContentValues> contentValuesVectorCategoryType = new Vector<>(sources.size());
-        for (Sources resultData : sources) {
-            ContentValues contentValuesMovies = new ContentValues();
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID, resultData.getId());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_NAME, resultData.getName());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_DESCRIPTION, resultData.getDescription());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL, resultData.getUrl());
-            contentValuesMovies.put(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL_TO_LOGOS, resultData.getUrlsToLogos().getMedium());
-
-            contentValuesVector.add(contentValuesMovies);
-
-            ContentValues contentValuesCategoryType = new ContentValues();
-            contentValuesCategoryType.put(NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE, resultData.getCategory());
-            contentValuesCategoryType.put(NewsContract.CategoryEntry.COLUMN_NEWSCHANNEL_KEY, resultData.getId());
-
-            contentValuesVectorCategoryType.add(contentValuesCategoryType);
-
-        }
-        if (contentValuesVector.size() > 0) {
-            ContentValues[] contentValuesArray = contentValuesVector.toArray(new ContentValues[contentValuesVector.size()]);
-            mContext.getContentResolver().bulkInsert(NewsContract.NewsChannelEntry.CONTENT_URI, contentValuesArray);
-        }
-
-        if (contentValuesVectorCategoryType.size() > 0) {
-            ContentValues[] contentValuesArray = contentValuesVectorCategoryType.toArray(new ContentValues[contentValuesVectorCategoryType.size()]);
-            mContext.getContentResolver().bulkInsert(NewsContract.CategoryEntry.CONTENT_URI, contentValuesArray);
-        }
-
-    }
 
 }

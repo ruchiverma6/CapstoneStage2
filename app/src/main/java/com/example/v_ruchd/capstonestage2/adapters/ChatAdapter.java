@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.ChatActivity;
 import com.example.v_ruchd.capstonestage2.R;
@@ -30,17 +28,15 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.LoaderCallbacks<Cursor>, AsyncQueryHandlerListener {
     public static final int TYPE_BOT = 0;
     public static final int TYPE_USER = 1;
-    public static final int TYPE_INPUT_SELETION_RESULT = 2;
-    public static final int TYPE_NEWS_CHANNELS_RESULT = 3;
-    private static final int INPUTSELECTION_LOADER = 101;
+    public static final int TYPE_NEWS_CATEGORY_RESULT = 3;
     private static final int NEWSCHANNELRESPONSE_LOADER = 102;
     private static final int QUERY_SELECTED_CATEGORY = 300;
     private static final int QUERY_SELECTED_CATEGORY_FOR_NEWS_RESULT = 301;
-    private final NewsChannelResultAdapter mChannelResponseAdapter;
+    private final NewsChannelCategoryResultAdapter mChannelResponseAdapter;
     private LayoutInflater inflater;
     private RecyclerView.ViewHolder viewHolder;
     private Cursor cursor;
-    private InputSelectionAdapter mInputSelectionAdapter;
+
 
     public void swapCursor(final Cursor cursor) {
         this.cursor = cursor;
@@ -70,10 +66,8 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
             return TYPE_USER;
         } else if (type == TYPE_BOT) {
             return TYPE_BOT;
-        } else if (type == TYPE_INPUT_SELETION_RESULT) {
-            return TYPE_INPUT_SELETION_RESULT;
-        } else if (type == TYPE_NEWS_CHANNELS_RESULT) {
-            return TYPE_NEWS_CHANNELS_RESULT;
+        }  else if (type == TYPE_NEWS_CATEGORY_RESULT) {
+            return TYPE_NEWS_CATEGORY_RESULT;
         }
         return -1;
     }
@@ -93,7 +87,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
                 break;
 
 
-            case TYPE_NEWS_CHANNELS_RESULT:
+            case TYPE_NEWS_CATEGORY_RESULT:
                 View newChannelResultViewHolder = inflater.inflate(R.layout.newschannel_result_layout, parent, false);
                 viewHolder = new NewsChannelResultViewHolder(newChannelResultViewHolder);
 
@@ -180,7 +174,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
 
 
-            case TYPE_NEWS_CHANNELS_RESULT:
+            case TYPE_NEWS_CATEGORY_RESULT:
 
                 final NewsChannelResultViewHolder newsChannelResultViewHolder = (NewsChannelResultViewHolder) viewHolder;
 
@@ -225,7 +219,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
         inflater = LayoutInflater.from(context);
 
-        mChannelResponseAdapter = new NewsChannelResultAdapter(context);
+        mChannelResponseAdapter = new NewsChannelCategoryResultAdapter(context);
 
     }
 
@@ -235,16 +229,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
         return position;
     }
 
-    public void setClickFalse(View view, final boolean isClicked) {
-        view.setEnabled(isClicked);
-        if (view instanceof ViewGroup) {
-            ViewGroup viewGroup = (ViewGroup) view;
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View child = viewGroup.getChildAt(i);
-                setClickFalse(child, isClicked);
-            }
-        }
-    }
+
 
 
     @Override
@@ -290,10 +275,5 @@ public class ChatAdapter extends RecyclerView.Adapter implements LoaderManager.L
 
 
 
-    private static class ViewHolder {
-        public TextView txtMessage;
-        public TextView txtInfo;
-        public LinearLayout content;
-        public LinearLayout contentWithBG;
-    }
+
 }

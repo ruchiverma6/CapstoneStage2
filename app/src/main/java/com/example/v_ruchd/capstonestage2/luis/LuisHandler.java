@@ -64,17 +64,6 @@ public class LuisHandler {
 
         }
 
-
-        String[] newsCategoryEntries = context.getResources().getStringArray(R.array.newscategory_msg_enteries);
-        for (String msg : newsCategoryEntries) {
-            if (topIntent.getName().contains(msg)) {
-                luisDataUpdateListener.onLuisDataUpdate(msg, ChatAdapter.TYPE_INPUT_SELETION_RESULT);
-                return;
-            }
-
-        }
-
-
         List<LUISEntity> entities = response.getEntities();
 
 
@@ -85,7 +74,7 @@ public class LuisHandler {
                 if (Pattern.compile(Pattern.quote(luisEntity.getName()), Pattern.CASE_INSENSITIVE).matcher(msg).find()
                         ) {
                     final String selectedData = luisEntity.getName();
-                    luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.input_category)+":" + selectedData, ChatAdapter.TYPE_NEWS_CHANNELS_RESULT);
+                    luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.input_category)+":" + selectedData, ChatAdapter.TYPE_NEWS_CATEGORY_RESULT);
 
                     return;
                 }

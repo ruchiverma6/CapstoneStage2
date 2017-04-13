@@ -45,8 +45,8 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     private TextView titleTextView;
     private String title;
     private SharedPreferences mSharedPreferences;
-    AnalyticsApplication application;
-     CollapsingToolbarLayout collapsingToolbarLayout;
+   private AnalyticsApplication application;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
     AppBarLayout appBarLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

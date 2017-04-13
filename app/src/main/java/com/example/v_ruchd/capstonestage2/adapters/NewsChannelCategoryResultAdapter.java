@@ -10,7 +10,6 @@ import android.widget.ImageView;
 
 import com.example.v_ruchd.capstonestage2.R;
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.listener.OnDataItemClickListener;
 import com.squareup.picasso.Picasso;
 
 
@@ -19,15 +18,15 @@ import com.squareup.picasso.Picasso;
  * Created by v-ruchd on 3/24/2017.
  */
 
-public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelResultAdapter.ViewHolder> {
+public class NewsChannelCategoryResultAdapter extends RecyclerView.Adapter<NewsChannelCategoryResultAdapter.ViewHolder> {
 
 
     private final LayoutInflater mLayoutInflater;
     private final Context context;
     private Cursor cursor;
-    private OnDataItemClickListener onBrowseContentItemClickListener;
 
-    public NewsChannelResultAdapter(Context context) {
+
+    public NewsChannelCategoryResultAdapter(Context context) {
         mLayoutInflater = LayoutInflater.from(context);
         this.context = context;
     }
@@ -55,14 +54,14 @@ public class NewsChannelResultAdapter extends RecyclerView.Adapter<NewsChannelRe
     }
 
     @Override
-    public NewsChannelResultAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NewsChannelCategoryResultAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View viewItem = mLayoutInflater.inflate(R.layout.newchannel_result_item, null);
         ViewHolder viewHolder = new ViewHolder(viewItem);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(NewsChannelResultAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(NewsChannelCategoryResultAdapter.ViewHolder holder, int position) {
         cursor = getItem(position);
 
         String logoUrl = cursor.getString(cursor.getColumnIndex(NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_URL_TO_LOGOS));
