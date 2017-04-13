@@ -8,9 +8,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 
+import com.example.v_ruchd.capstonestage2.adapters.ChatAdapter;
 import com.example.v_ruchd.capstonestage2.listener.DataSaveListener;
-import com.example.v_ruchd.capstonestage2.luis.LuisDataUpdateListener;
-import com.example.v_ruchd.capstonestage2.luis.LuisHandler;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessage;
 import com.example.v_ruchd.capstonestage2.modal.ChatMessageResponse;
 import com.google.android.gms.ads.AdListener;
@@ -122,20 +121,18 @@ public class MainActivity extends AppCompatActivity {
      * Method to start ChatActivity.
      */
     private void startHomeActivity() {
+
         Intent homeActivityIntent = new Intent(this, ChatActivity.class);
         startActivity(homeActivityIntent);
     }
 
 
     private void procesSentMessageFromUser(final String messageText) {
-        LuisHandler luisHandler = new LuisHandler(this);
-        luisHandler.sendMessageToLuis(messageText, new LuisDataUpdateListener() {
-            @Override
-            public void onLuisDataUpdate(String messageContent, int messageType) {
+
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setMessage(messageContent);
+                chatMessage.setMessage(getString(R.string.start_conversation_message));
                 chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
-                chatMessage.setMessageType(messageType);
+                chatMessage.setMessageType(ChatAdapter.TYPE_BOT);
                 chatMessage.setFrom(getString(R.string.bot));
                 ChatMessageResponse chatMessageResponse = new ChatMessageResponse();
                 chatMessageResponse.setChatMessages(new ChatMessage[]{chatMessage});
@@ -155,14 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 saverTask.execute();
             }
 
-            @Override
-            public void onLuisDataErrorListener(String errorMessage) {
-                stopProgressDialog();
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                }
-                startHomeActivity();
-            }
-        });
-    }
+
+
 }

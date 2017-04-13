@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,8 +19,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.v_ruchd.capstonestage2.data.NewsContract;
-import com.example.v_ruchd.capstonestage2.fragments.NewsListFragment;
 import com.example.v_ruchd.capstonestage2.fragments.NewsDetailFragment;
+import com.example.v_ruchd.capstonestage2.fragments.NewsListFragment;
 import com.example.v_ruchd.capstonestage2.helper.AsyncQueryHandlerListener;
 import com.example.v_ruchd.capstonestage2.helper.CustomAsyncQueryHandler;
 import com.example.v_ruchd.capstonestage2.listener.DataUpdateListener;
@@ -209,9 +211,10 @@ cursor.moveToPosition(0);
                     .replace(R.id.news_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
+            Bundle bundle= ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
             Intent intent = new Intent(this, NewsDetailActivity.class);
             intent.putExtras(result);
-            startActivity(intent);
+            startActivity(intent,bundle);
         }
     }
 
@@ -230,7 +233,7 @@ cursor.moveToPosition(0);
         switch (item.getItemId()) {
 
             case android.R.id.home:
-                onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
 
         }
@@ -314,6 +317,8 @@ cursor.moveToPosition(0);
 
 
     }
+
+
 }
 
 

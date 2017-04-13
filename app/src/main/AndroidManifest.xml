@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,12 +22,24 @@
 
             </intent-filter>
         </activity>
-        <activity android:name=".ChatActivity" />
+        <activity android:name=".ChatActivity"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTop"
+            android:theme="@style/ChatActivityAppTheme"/>
         <activity android:name=".NewsListActivity"
-            />
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/NewsListActivityAppTheme"
+            android:parentActivityName=".ChatActivity">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".ChatActivity" />
+    </activity>
         <activity android:name=".NewsDetailActivity"
-           ></activity>
-
+            android:configChanges="orientation|screenSize"  android:parentActivityName=".NewsListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".NewsListActivity" />
+        </activity>
         <provider
             android:name=".data.NewsProvider"
             android:authorities="com.example.v_ruchd.capstonestage2" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for

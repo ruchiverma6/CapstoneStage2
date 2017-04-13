@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -201,7 +202,9 @@ public class ChatActivity extends AppCompatActivity implements LoaderManager.Loa
                 .build());
         Intent intent = new Intent(ChatActivity.this, NewsListActivity.class);
         intent.putExtra(getString(R.string.selected_channel_key), selectedData);
-        startActivity(intent);
+        Bundle bundle= ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
+
+        startActivity(intent,bundle);
     }
 
 

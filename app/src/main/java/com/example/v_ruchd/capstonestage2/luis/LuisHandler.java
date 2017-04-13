@@ -108,7 +108,7 @@ public class LuisHandler {
     private String getGreetingMsg() {
         String[] greetingMsgArray = context.getResources().getStringArray(R.array.greeting_msges_from_bot);
         int idx = new Random().nextInt(greetingMsgArray.length);
-        return (context.getString(R.string.select_category_msg));
+        return (greetingMsgArray[idx]);
 
     }
 }

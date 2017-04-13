@@ -109,6 +109,7 @@ public class Utils {
                 saverTask.setDataSaveListener(new DataSaveListener() {
                     @Override
                     public void onDataSave() {
+
                         if (null != dataUpdateListener) {
                             dataUpdateListener.onDataRetrieved(articlesList);
                         }
@@ -132,6 +133,7 @@ public class Utils {
             }
         });
     }
+
 
     public static String retrieveChannelForCategory(Context context, String selectedChannel) {
         String newsChannel=null;
