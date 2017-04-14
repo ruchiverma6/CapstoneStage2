@@ -1,7 +1,6 @@
 package com.example.v_ruchd.capstonestage2.luis;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.example.v_ruchd.capstonestage2.Constants;
@@ -16,7 +15,6 @@ import com.microsoft.cognitiveservices.luis.clientlibrary.LUISResponseHandler;
 
 import java.util.List;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 /**
  * Created by ruchi on 2/4/17.
@@ -32,7 +30,7 @@ public class LuisHandler {
 
     public void sendMessageToLuis(String msg, final LuisDataUpdateListener luisDataUpdateListener) {
         try {
-            LUISClient client = new LUISClient(Constants.APP_ID, Constants.SUBCRIPTION_KEY, true);
+            LUISClient client = new LUISClient(Constants.LUIS_APP_KEY, Constants.LUIS_SUBCRIPTION_KEY, true);
             client.predict(msg, new LUISResponseHandler() {
                 @Override
                 public void onSuccess(LUISResponse response) {

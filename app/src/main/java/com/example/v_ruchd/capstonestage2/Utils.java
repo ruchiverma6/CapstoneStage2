@@ -57,7 +57,7 @@ public class Utils {
         ApiInterface apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
-        Call<NewsResponse> call = apiService.getNewsResponseByChannel(selectedData, Constants.API_KEY);
+        Call<NewsResponse> call = apiService.getNewsResponseByChannel(selectedData, Constants.NEWS_OPEN_API_KEY);
         call.enqueue(new Callback<NewsResponse>() {
             @Override
             public void onResponse(Call<NewsResponse> call, Response<NewsResponse> response) {
