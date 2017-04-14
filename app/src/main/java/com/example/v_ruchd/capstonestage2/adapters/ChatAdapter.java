@@ -33,7 +33,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
     private LayoutInflater inflater;
     private RecyclerView.ViewHolder viewHolder;
     private Cursor cursor;
-    CustomAsyncQueryHandler customAsyncQueryHandler;
+    private CustomAsyncQueryHandler customAsyncQueryHandler;
 
     private Activity context;
 
@@ -198,7 +198,6 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
             mScienceNatureCategoryButton = (Button) itemView.findViewById(R.id.science_nature_category_btn);
             mSportCategoryButton = (Button) itemView.findViewById(R.id.sport_category_button);
             mTechnologyCategoryButton = (Button) itemView.findViewById(R.id.technology_category_button);
-
             mGeneralCategoryButton.setOnClickListener(this);
             mEntertainmentCategoryButton.setOnClickListener(this);
             mGamingCategoryButton.setOnClickListener(this);
