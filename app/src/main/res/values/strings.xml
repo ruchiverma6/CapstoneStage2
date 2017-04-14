@@ -21,7 +21,7 @@
 
 
     <string name="greeting_msg_from_bot">Hello I m your friendly bot. I will help you to find live news headlines.</string>
-    <string name="error_message_from_bot">I will help you to find news from below categories.</string>
+    <string name="error_message_from_bot">I will help you to find news from below categories. Please select any one from below:</string>
     <string name="view_result_news">View News</string>
     <string name="general_category">general</string>
     <string name="entertainment_category">entertainment</string>

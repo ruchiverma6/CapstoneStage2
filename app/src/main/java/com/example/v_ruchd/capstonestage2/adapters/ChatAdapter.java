@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,20 +23,25 @@ import com.example.v_ruchd.capstonestage2.holders.UserMessageViewHolder;
 public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandlerListener {
     public static final int TYPE_BOT = 0;
     public static final int TYPE_USER = 1;
+    public static final int ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION = 2;
     public static final int TYPE_NEWS_CATEGORY_RESULT = 3;
 
     private static final int QUERY_SELECTED_CATEGORY = 300;
     private static final int QUERY_SELECTED_CATEGORY_FOR_NEWS_RESULT = 301;
+    private static final int DELETE_MESSAGE_RESULT = 303;
 
     private LayoutInflater inflater;
     private RecyclerView.ViewHolder viewHolder;
     private Cursor cursor;
+    CustomAsyncQueryHandler customAsyncQueryHandler;
 
     private Activity context;
 
     public ChatAdapter(Activity context) {
         this.context = context;
         inflater = LayoutInflater.from(context);
+        customAsyncQueryHandler = new CustomAsyncQueryHandler(context.getContentResolver());
+        customAsyncQueryHandler.setAsyncQueryHandlerListener(this);
     }
 
     public void swapCursor(final Cursor cursor) {
@@ -66,6 +72,8 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
             return TYPE_USER;
         } else if (type == TYPE_BOT) {
             return TYPE_BOT;
+        } else if (type == ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION) {
+            return ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION;
         } else if (type == TYPE_NEWS_CATEGORY_RESULT) {
             return TYPE_NEWS_CATEGORY_RESULT;
         }
@@ -86,6 +94,10 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
                 viewHolder = new BOTMessageViewHolder(botMessageeView);
                 break;
 
+            case ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION:
+                View errorLayoutView = inflater.inflate(R.layout.catehory_selection_result_layout, parent, false);
+                viewHolder = new CategorySelectionResultViewHolder(errorLayoutView);
+                break;
 
             case TYPE_NEWS_CATEGORY_RESULT:
                 View newsCategoryResultView = inflater.inflate(R.layout.newscategory_result_layout, parent, false);
@@ -98,6 +110,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
         return viewHolder;
     }
 
+
     @Override
     public void onInsertComplete(int token, Object cookie, Uri uri) {
 
@@ -105,7 +118,16 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
 
     @Override
     public void onDeleteComplete(int token, Object cookie, int result) {
-
+        switch (token) {
+            case DELETE_MESSAGE_RESULT:
+                notifyDataSetChanged();
+                Bundle bundle = (Bundle) cookie;
+                String selectedCategoryForNewsResult = bundle.getString(context.getString(R.string.selected_channel_for_news_result));
+                ((ChatActivity) context).onCategorySelection(selectedCategoryForNewsResult);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -121,11 +143,17 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
                 break;
             case QUERY_SELECTED_CATEGORY_FOR_NEWS_RESULT:
                 String selectedCategoryForNewsResult = "";
-
+                String messgaeID = "";
                 if (cursor.moveToFirst()) {
                     selectedCategoryForNewsResult = cursor.getString(cursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE));
+                    messgaeID = cursor.getString(cursor.getColumnIndex(NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID));
+
                 }
-                ((ChatActivity) context).onCategorySelection(selectedCategoryForNewsResult);
+                Bundle bundle = new Bundle();
+                bundle.putString(context.getString(R.string.selected_channel_for_news_result), selectedCategoryForNewsResult);
+                customAsyncQueryHandler.startDelete(DELETE_MESSAGE_RESULT, bundle, NewsContract.MessageEntry.buildMessageWithId(messgaeID), null, null);
+
+
                 break;
         }
     }
@@ -143,6 +171,67 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
             super(itemView);
             mNewsCategoryResultButton = (Button) itemView.findViewById(R.id.news_result_btn);
 
+        }
+    }
+
+    public class CategorySelectionResultViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public Button mMusicCategoryButton;
+        public Button mGeneralCategoryButton;
+        public Button mEntertainmentCategoryButton;
+        public Button mGamingCategoryButton;
+        public Button mPoliticsCategoryButton;
+        public Button mScienceNatureCategoryButton;
+        public Button mSportCategoryButton;
+        public Button mTechnologyCategoryButton;
+        public Button mBusinessCategoryButton;
+        private String messageId;
+
+        public CategorySelectionResultViewHolder(View itemView) {
+            super(itemView);
+            mBusinessCategoryButton = (Button) itemView.findViewById(R.id.businss_category_btn);
+            mBusinessCategoryButton.setOnClickListener(this);
+            mGeneralCategoryButton = (Button) itemView.findViewById(R.id.general_category_btn);
+            mEntertainmentCategoryButton = (Button) itemView.findViewById(R.id.entertail_category_btn);
+            mGamingCategoryButton = (Button) itemView.findViewById(R.id.gaming_category_btn);
+            mMusicCategoryButton = (Button) itemView.findViewById(R.id.music_category_btn);
+            mPoliticsCategoryButton = (Button) itemView.findViewById(R.id.politics_category_btn);
+            mScienceNatureCategoryButton = (Button) itemView.findViewById(R.id.science_nature_category_btn);
+            mSportCategoryButton = (Button) itemView.findViewById(R.id.sport_category_button);
+            mTechnologyCategoryButton = (Button) itemView.findViewById(R.id.technology_category_button);
+
+            mGeneralCategoryButton.setOnClickListener(this);
+            mEntertainmentCategoryButton.setOnClickListener(this);
+            mGamingCategoryButton.setOnClickListener(this);
+            mMusicCategoryButton.setOnClickListener(this);
+            mPoliticsCategoryButton.setOnClickListener(this);
+            mScienceNatureCategoryButton.setOnClickListener(this);
+            mSportCategoryButton.setOnClickListener(this);
+            mTechnologyCategoryButton.setOnClickListener(this);
+
+        }
+
+        public void setMessageId(String messageId) {
+            this.messageId = messageId;
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.businss_category_btn:
+                case R.id.general_category_btn:
+                case R.id.politics_category_btn:
+                case R.id.sport_category_button:
+                case R.id.gaming_category_btn:
+                case R.id.music_category_btn:
+                case R.id.technology_category_button:
+                case R.id.science_nature_category_btn:
+                case R.id.entertail_category_btn:
+                    Bundle bundle = new Bundle();
+                    bundle.putString(context.getString(R.string.selected_channel_for_news_result), ((Button) v).getText().toString());
+                    customAsyncQueryHandler.startDelete(DELETE_MESSAGE_RESULT, bundle, NewsContract.MessageEntry.buildMessageWithId(messageId), null, null);
+                default:
+                    break;
+            }
         }
     }
 
@@ -168,7 +257,15 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
 
                 holder.mTextMessageTextView.setText(messageBot);
                 break;
+            case ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION:
+                final CategorySelectionResultViewHolder errorCategoryResultViewHolder = (CategorySelectionResultViewHolder) viewHolder;
+                cursor.moveToPosition(position);
+                String messageIdForErrorView = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
 
+                errorCategoryResultViewHolder.setMessageId(messageIdForErrorView);
+
+
+                break;
 
             case TYPE_NEWS_CATEGORY_RESULT:
 
@@ -178,9 +275,6 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
                 cursor.moveToPosition(position);
                 String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
 
-
-                CustomAsyncQueryHandler customAsyncQueryHandler = new CustomAsyncQueryHandler(context.getContentResolver());
-                customAsyncQueryHandler.setAsyncQueryHandlerListener(this);
                 customAsyncQueryHandler.startQuery(QUERY_SELECTED_CATEGORY, newsCategoryResultViewHolder, NewsContract.MessageCategorySelectionEntry.buildselectedCategoryForMessage(messageId), null, null, null, null);
 
 
@@ -190,7 +284,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
 
                         cursor.moveToPosition(position);
                         String messageId = cursor.getString(cursor.getColumnIndex(NewsContract.MessageEntry.COLUMN_MESSAGE_ID));
-                        CustomAsyncQueryHandler customAsyncQueryHandler = new CustomAsyncQueryHandler(context.getContentResolver());
+
                         customAsyncQueryHandler.setAsyncQueryHandlerListener(ChatAdapter.this);
                         customAsyncQueryHandler.startQuery(QUERY_SELECTED_CATEGORY_FOR_NEWS_RESULT, null, NewsContract.MessageCategorySelectionEntry.buildselectedCategoryForMessage(messageId), null, null, null, null);
 
@@ -211,7 +305,6 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
     public long getItemId(int position) {
         return position;
     }
-
 
 
 }

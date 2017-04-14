@@ -96,7 +96,7 @@ public class LuisHandler {
                     return;
                 } else if (context.getString(R.string.none).equalsIgnoreCase(luisIntent.getName())) {
                     if (entities == null || entities.size() == 0) {
-                        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.select_category_msg), ChatAdapter.TYPE_BOT);
+                        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.select_category_msg), ChatAdapter.ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION);
                         return;
                     }
 
@@ -124,7 +124,7 @@ public class LuisHandler {
         }
 
 
-        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.select_category_msg), ChatAdapter.TYPE_BOT);
+        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.select_category_msg), ChatAdapter.ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION);
         LUISDialog dialog = response.getDialog();
         if (dialog != null) {
             Log.v("Dialog Status: ", dialog.getStatus());

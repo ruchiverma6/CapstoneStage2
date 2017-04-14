@@ -199,7 +199,7 @@ public class NewsProvider extends ContentProvider {
                 String sortBy = uri.getPathSegments().get(1);
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         NewsContract.MessageCategorySelectionEntry.TABLE_NAME,
-                        new String[]{NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE},
+                        new String[]{NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE, NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID},
                         selectionCategoryForMessage,
                         new String[]{sortBy},
                         null,
@@ -297,7 +297,26 @@ public class NewsProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+        int returnCount = 0;
+
+        switch (match) {
+            case MESSAGEWITHMESSAGEID:
+                String messageId = uri.getPathSegments().get(1);
+                long _id = db.delete(NewsContract.MessageEntry.TABLE_NAME,selectionIdForMessage,new String[]{messageId});
+                if (_id > 0) {
+                    returnCount++;
+                }
+                else
+                    throw new android.database.SQLException("Failed to update row into " + uri);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return returnCount;
     }
 
     @Override

@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/bubble_out"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/error_message_from_bot"
+          />
+        <Button android:id="@+id/businss_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/business_category"/>
+
+
+        <Button android:id="@+id/general_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/general_category"/>
+        <Button android:id="@+id/entertail_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/entertainment_category"/>
+        <Button android:id="@+id/gaming_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/gaming_category"/>
+        <Button android:id="@+id/music_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/music_category"/>
+        <Button android:id="@+id/politics_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/politics_category"/>
+        <Button android:id="@+id/science_nature_category_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-8dp"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+
+            android:text="@string/science_nature_category"/>
+        <Button android:id="@+id/sport_category_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:layout_marginBottom="-8dp"
+            android:text="@string/sport_category"/>
+
+
+
+
+        <Button android:id="@+id/technology_category_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/right_small"
+            android:drawablePadding="2dp"
+            android:text="@string/technology_category"/>
+
+    </LinearLayout>
+</RelativeLayout>
