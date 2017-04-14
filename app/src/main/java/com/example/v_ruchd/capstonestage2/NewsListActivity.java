@@ -45,9 +45,10 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     private TextView titleTextView;
     private String title;
     private SharedPreferences mSharedPreferences;
-   private AnalyticsApplication application;
+    private AnalyticsApplication application;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     AppBarLayout appBarLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,26 +68,88 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         }
 
 
+        fetchDataFromerver();
+    }
+
+    private void fetchDataFromerver() {
+        final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedNewsCategory);
+        final Fragment newsListFragment = getSupportFragmentManager().findFragmentByTag(NEWSLISTFRAGMENTTAG);
+
+        Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener<Articles>() {
+            @Override
+            public void onDataRetrieved(List<Articles> resultList) {
+
+                if (null != newsListFragment && newsListFragment instanceof NewsListFragment) {
+                    ((NewsListFragment) newsListFragment).onDataRetrieved(channelForCategory, resultList);
+                }
+
+                if (mTwoPane) {
+
+
+                    CustomAsyncQueryHandler customAsyncQueryHandler = new CustomAsyncQueryHandler(getContentResolver());
+                    customAsyncQueryHandler.setAsyncQueryHandlerListener(new AsyncQueryHandlerListener() {
+                        @Override
+                        public void onInsertComplete(int token, Object cookie, Uri uri) {
+
+                        }
+
+                        @Override
+                        public void onDeleteComplete(int token, Object cookie, int result) {
+
+                        }
+
+                        @Override
+                        public void onQueryComplete(int token, Object cookie, Cursor cursor) {
+                            if (null != cursor && cursor.moveToFirst()) {
+                                cursor.moveToPosition(0);
+                                String sourceUrl = cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
+                                String title = cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_TITLE));
+                                Bundle bundle = new Bundle();
+                                bundle.putString(getString(R.string.source_url_key), sourceUrl);
+                                bundle.putString(getString(R.string.title_key), title);
+                                onFragmentInteraction(bundle);
+                            }
+                        }
+
+                        @Override
+                        public void onUpdateComplete(int token, Object cookie, int result) {
+
+                        }
+                    });
+                    customAsyncQueryHandler.startQuery(QUERY_ARTICLES, null, NewsContract.ArticleEntry.buildNewsArticleWithChannel(channelForCategory), null, null, null, null);
+
+
+                }
+            }
+
+            @Override
+            public void onDataError(String message) {
+                if (null != newsListFragment && newsListFragment instanceof NewsListFragment) {
+                    ((NewsListFragment) newsListFragment).onDataError(message);
+                }
+            }
+        });
+
     }
 
     private void initComponents() {
-        mSharedPreferences=getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+        mSharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
         selectedNewsCategory = getIntent().getStringExtra(getString(R.string.selected_channel_key));
-        if(selectedNewsCategory ==null){
-            selectedNewsCategory =mSharedPreferences.getString(getString(R.string.selected_channel_for_news_result),getString(R.string.channelid_for_general_category));
+        if (selectedNewsCategory == null) {
+            selectedNewsCategory = mSharedPreferences.getString(getString(R.string.selected_channel_for_news_result), getString(R.string.channelid_for_general_category));
         }
         saveSelectedNewsCategory(selectedNewsCategory);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
-        titleTextView=(TextView)findViewById(R.id.tool_bar_title);
-        if(null!= selectedNewsCategory) {
+        titleTextView = (TextView) findViewById(R.id.tool_bar_title);
+        if (null != selectedNewsCategory) {
             title = selectedNewsCategory.substring(0, 1).toUpperCase() + selectedNewsCategory.substring(1, selectedNewsCategory.length()) + " " + getString(R.string.news_label);
         }
         titleTextView.setText(title);
         appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-        toolbar = (Toolbar)findViewById(R.id.app_bar);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean isShow = false;
             int scrollRange = -1;
@@ -113,68 +176,10 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     @Override
     protected void onResume() {
         super.onResume();
-        String screenName=getString(R.string.news_article_list);
+        String screenName = getString(R.string.news_article_list);
         Log.i(TAG, "Setting screen name: " + screenName);
         mTracker.setScreenName("Image~" + screenName);
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-        final String channelForCategory = Utils.retrieveChannelForCategory(this, selectedNewsCategory);
-       final Fragment newsListFragment = getSupportFragmentManager().findFragmentByTag(NEWSLISTFRAGMENTTAG);
-
-        Utils.fetchArticleResponse(this, channelForCategory, new DataUpdateListener<Articles>() {
-            @Override
-            public void onDataRetrieved(List<Articles> resultList) {
-
-                if (null != newsListFragment && newsListFragment instanceof NewsListFragment) {
-                    ((NewsListFragment) newsListFragment).onDataRetrieved(channelForCategory,resultList);
-                }
-
-              if(mTwoPane) {
-
-
-                  CustomAsyncQueryHandler customAsyncQueryHandler=new CustomAsyncQueryHandler(getContentResolver());
-                  customAsyncQueryHandler.setAsyncQueryHandlerListener(new AsyncQueryHandlerListener() {
-                      @Override
-                      public void onInsertComplete(int token, Object cookie, Uri uri) {
-
-                      }
-
-                      @Override
-                      public void onDeleteComplete(int token, Object cookie, int result) {
-
-                      }
-
-                      @Override
-                      public void onQueryComplete(int token, Object cookie, Cursor cursor) {
-                          if (null != cursor && cursor.moveToFirst()) {
-                                   cursor.moveToPosition(0);
-                              String sourceUrl=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
-                              String title=cursor.getString(cursor.getColumnIndex(NewsContract.ArticleEntry.COLUMN_TITLE));
-                              Bundle bundle = new Bundle();
-                              bundle.putString(getString(R.string.source_url_key), sourceUrl);
-                              bundle.putString(getString(R.string.title_key), title);
-                              onFragmentInteraction(bundle);
-                          }
-                      }
-
-                      @Override
-                      public void onUpdateComplete(int token, Object cookie, int result) {
-
-                      }
-                  });
-                  customAsyncQueryHandler.startQuery(QUERY_ARTICLES,null, NewsContract.ArticleEntry.buildNewsArticleWithChannel(channelForCategory),null,null,null,null);
-
-
-
-                }
-            }
-
-            @Override
-            public void onDataError(String message) {
-                if (null != newsListFragment && newsListFragment instanceof NewsListFragment) {
-                    ((NewsListFragment) newsListFragment).onDataError(message);
-                }
-            }
-        });
     }
 
     private void saveSelectedNewsCategory(String newsCategory) {
@@ -190,13 +195,11 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
      */
     private void setUpActionBar() {
         setSupportActionBar(toolbar);
-      getSupportActionBar().setTitle(" ");
+        getSupportActionBar().setTitle(" ");
 
 
-  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-
 
 
     @Override
@@ -211,10 +214,10 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
                     .replace(R.id.news_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
-            Bundle bundle= ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
+            Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
             Intent intent = new Intent(this, NewsDetailActivity.class);
             intent.putExtras(result);
-            startActivity(intent,bundle);
+            startActivity(intent, bundle);
         }
     }
 
@@ -241,14 +244,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     }
 
 
-
-
-
-
     @Override
     public void onStart() {
         super.onStart();
-
 
 
     }
@@ -256,7 +254,6 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     @Override
     public void onStop() {
         super.onStop();
-
 
 
     }

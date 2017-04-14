@@ -25,7 +25,7 @@ android:orientation="vertical">
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="@dimen/container_padding">
 
         <EditText
             android:id="@+id/messageEdit"
@@ -38,11 +38,11 @@ android:orientation="vertical">
 
         <Button
             android:id="@+id/chatSendButton"
-            android:layout_width="64dp"
-            android:layout_height="54dp"
+            android:layout_width="@dimen/chat_send_btn_width"
+            android:layout_height="@dimen/chat_send_btn_height"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-android:drawableLeft="@drawable/ic_send_black_24dp"
+            android:drawableLeft="@drawable/ic_send_black_24dp"
 
           />
 

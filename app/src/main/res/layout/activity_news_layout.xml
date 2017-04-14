@@ -20,49 +20,49 @@
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <TextView android:id="@+id/tool_bar_title"
+            <TextView
+                android:id="@+id/tool_bar_title"
+                style="?android:attr/textAppearanceLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:layout_marginLeft="12dp"
-                style="?android:attr/textAppearanceLarge"
+                android:layout_marginStart="@dimen/tool_bar_title_margin_left"
+                android:layout_marginLeft="@dimen/tool_bar_title_margin_left"
+                android:paddingBottom="@dimen/tool_bar_title_padding_bottom"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
-                android:paddingBottom="20dp"
                 app:layout_collapseMode="parallax" />
-
-
 
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/app_bar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-
                 android:layout_gravity="top"
+
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:contentInsetStart="12dp"
                 app:layout_collapseMode="pin" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:orientation="vertical">
-
-    <fragment
-        android:id="@+id/fragment_browse_content"
-        android:name="com.example.v_ruchd.capstonestage2.fragments.NewsListFragment"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:tag="newsarticletag"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        tools:layout="@android:layout/list_content" />
+        <fragment
+            android:id="@+id/fragment_browse_content"
+            android:name="com.example.v_ruchd.capstonestage2.fragments.NewsListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:tag="newsarticletag"
+
+            tools:layout="@android:layout/list_content" />
 
 
-</LinearLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -95,7 +95,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
                 break;
 
             case ERROR_REULT_LAYOUT_FOR_CATEGORY_SELECTION:
-                View errorLayoutView = inflater.inflate(R.layout.catehory_selection_result_layout, parent, false);
+                View errorLayoutView = inflater.inflate(R.layout.category_selection_result_layout, parent, false);
                 viewHolder = new CategorySelectionResultViewHolder(errorLayoutView);
                 break;
 
@@ -191,7 +191,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
             mBusinessCategoryButton = (Button) itemView.findViewById(R.id.businss_category_btn);
             mBusinessCategoryButton.setOnClickListener(this);
             mGeneralCategoryButton = (Button) itemView.findViewById(R.id.general_category_btn);
-            mEntertainmentCategoryButton = (Button) itemView.findViewById(R.id.entertail_category_btn);
+            mEntertainmentCategoryButton = (Button) itemView.findViewById(R.id.entertainment_category_btn);
             mGamingCategoryButton = (Button) itemView.findViewById(R.id.gaming_category_btn);
             mMusicCategoryButton = (Button) itemView.findViewById(R.id.music_category_btn);
             mPoliticsCategoryButton = (Button) itemView.findViewById(R.id.politics_category_btn);
@@ -224,7 +224,7 @@ public class ChatAdapter extends RecyclerView.Adapter implements AsyncQueryHandl
                 case R.id.music_category_btn:
                 case R.id.technology_category_button:
                 case R.id.science_nature_category_btn:
-                case R.id.entertail_category_btn:
+                case R.id.entertainment_category_btn:
                     Bundle bundle = new Bundle();
                     bundle.putString(context.getString(R.string.selected_channel_for_news_result), ((Button) v).getText().toString());
                     customAsyncQueryHandler.startDelete(DELETE_MESSAGE_RESULT, bundle, NewsContract.MessageEntry.buildMessageWithId(messageId), null, null);
