@@ -20,10 +20,7 @@ import com.squareup.picasso.Picasso;
  */
 
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHolder> {
-
-
-
-    private static OnDataItemClickListener onBrowseContentItemClickListener;
+    private static OnDataItemClickListener onDataItemClickListener;
     private Cursor cursor;
     private Context mContext;
 
@@ -75,7 +72,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
 
 
     public void setRecylerViewItemListener(OnDataItemClickListener onBrowseContentItemClickListener) {
-        this.onBrowseContentItemClickListener = onBrowseContentItemClickListener;
+        this.onDataItemClickListener = onBrowseContentItemClickListener;
     }
 
 
@@ -100,7 +97,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.ViewHo
             Bundle bundle = new Bundle();
             bundle.putString(mContext.getString(R.string.source_url_key), sourceUrl);
             bundle.putString(mContext.getString(R.string.title_key), title);
-            onBrowseContentItemClickListener.onClick(v, 0, bundle);
+            if(null!=onDataItemClickListener) {
+                onDataItemClickListener.onClick(v, 0, bundle);
+            }
         }
     }
 }

@@ -77,41 +77,6 @@ public class NewsWidgetRemoteViewService extends RemoteViewsService {
                         R.layout.news_list_item);
 String title=data.getString(data.getColumnIndex(NewsContract.ArticleEntry.COLUMN_TITLE));
                 views.setTextViewText(R.id.news_title_text_view, title);
-           /*     String imageLogoUrl=data.getString(data.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL_TO_IMAGE));
-                Bitmap imageBitmap=getBitmapFromUrl(imageLogoUrl);
-
-views.setImageViewBitmap(R.id.news_image_logo,imageBitmap);*/
-
-  /*              String symbol = data.getString(Contract.Quote.POSITION_SYMBOL);
-                String price = dollarFormat.format(data.getFloat(Contract.Quote.POSITION_PRICE));
-                float rawAbsoluteChange = data.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
-                float percentageChange = data.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
-
-                views.setTextViewText(R.id.symbol, symbol);
-                views.setTextViewText(R.id.price, price);
-
-                String change = dollarFormatWithPlus.format(rawAbsoluteChange);
-                String percentage = percentageFormat.format(percentageChange / 100);
-
-                if (rawAbsoluteChange > 0) {
-                    views.setInt(R.id.change,"setBackgroundResource",R.drawable.percent_change_pill_green);
-
-                } else {
-                    views.setInt(R.id.change,"setBackgroundResource",R.drawable.percent_change_pill_red);
-
-
-                }
-
-                if (PrefUtils.getDisplayMode(getApplicationContext())
-                        .equals(getApplicationContext().getString(R.string.pref_display_mode_absolute_key))) {
-
-                    views.setTextViewText(R.id.change, change);
-                } else {
-
-                    views.setTextViewText(R.id.change, percentage);
-                }
-
-*/
 
                 Intent fillIntent = new Intent();
               String sourceUrl=  data.getString(data.getColumnIndex(NewsContract.ArticleEntry.COLUMN_URL));
@@ -126,7 +91,7 @@ views.setImageViewBitmap(R.id.news_image_logo,imageBitmap);*/
 
             @Override
             public RemoteViews getLoadingView() {
-                return null/*new RemoteViews(getPackageName(), R.layout.list_item_quote)*/;
+                return null;
             }
 
             @Override
@@ -153,17 +118,6 @@ views.setImageViewBitmap(R.id.news_image_logo,imageBitmap);*/
         return selectedChannel;
     }
 
-
-    public Bitmap getBitmapFromUrl(String urlLogo) {
-            try {
-                URL url = new URL(urlLogo);
-                Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                return image;
-            } catch(IOException e) {
-                System.out.println(e);
-            }
-            return null;
-        }
 
 
 }

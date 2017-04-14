@@ -66,4 +66,6 @@
     <string name="newsresult">viewnewsresult</string>
     <string name="send_message_action">sendmessage</string>
     <string name="input_category">inputcategory</string>
+    <string name="view">View</string>
+    <string name="news">News</string>
 </resources>

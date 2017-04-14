@@ -33,8 +33,6 @@ public class NewsContract {
         // Table name
         public static final String TABLE_NAME = "newschannel";
 
-        public static final String COLUMN_NEWSCHANNEL_ID = "newschannelid";
-
         public static final String COLUMN_NEWSCHANNEL_SOURCE_ID = "newschannelsourceid";
 
         public static final String COLUMN_NEWSCHANNEL_NAME = "newschannelname";
@@ -44,24 +42,10 @@ public class NewsContract {
         public static final String COLUMN_NEWSCHANNEL_URL = "newschannelurl";
         public static final String COLUMN_NEWSCHANNEL_URL_TO_LOGOS = "urlsToLogos";
 
-        public static Uri buildMovieUri(long id) {
+        public static Uri buildNewsChannelUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        /*
-            Student: This is the buildWeatherLocation function you filled in.
-         */
-        public static Uri buildNewsChannelWithCategory(String categoryType) {
-            return CONTENT_URI.buildUpon().appendPath(categoryType).build();
-        }
-
-        public static Uri buildMovieWithSortByAndId(String sortBy,String movieID) {
-            return CONTENT_URI.buildUpon().appendPath(sortBy).appendPath(movieID).build();
-        }
-
-        public static Uri buildMovieWithMovieId(String movieID) {
-            return CONTENT_URI.buildUpon().appendPath(movieID).build();
-        }
     }
 
 
@@ -76,12 +60,6 @@ public class NewsContract {
         public static final String COLUMN_CATEGORY_TYPE = "categorytype";
         public static final String COLUMN_NEWSCHANNEL_KEY="newschannelid";
 
-        public static String selection=COLUMN_NEWSCHANNEL_KEY + " =? AND " + COLUMN_CATEGORY_TYPE + " =? ";
-
-        public static Uri buildSortByUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-
-        }
 
         public static Uri buildCategoryTypeUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
@@ -104,9 +82,7 @@ public class NewsContract {
         public static final String COLUMN_URL = "url";
         public static final String COLUMN_URL_TO_IMAGE = "urlToImage";
         public static final String COLUMN_PUBLISHEDAT = "publishedAt";
-        public static final String COLUMN_NEWSCHANNEL_ID="newschannelid";
 
-        public static String selection=COLUMN_NEWSCHANNEL_ID + " =? AND " + COLUMN_ARTICLE_SOURCE_CHANNEL_ID + " =? ";
 
         public static Uri buildNewsArticleWithChannel(String newsChannel) {
             return CONTENT_URI.buildUpon().appendPath(newsChannel).build();
@@ -154,9 +130,6 @@ public class NewsContract {
         public static final String COLUMN_MESSAGE_ID="id";
         public static final String COLUMN_MESSAGE_SELECTED_CATEGORY_TYPE = "selectedcategorytype";
 
-        public static Uri buildMessageUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
 
         public static Uri buildselectedCategoryForMessage(String messageID) {
             return CONTENT_URI.buildUpon().appendPath(messageID).build();
@@ -172,13 +145,9 @@ public class NewsContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MESSAGESLENGTH;
         // Table name
         public static final String TABLE_NAME = "messagetotallengthtable";
-        public static final String COLUMN_MESSAGE_ID="id";
         public static final String COLUMN_MESSAGE_TOTAL_LENGTH = "messagetotallength";
         public static final String COLUMN_MESSAGE_FROM = "messagefrom";
 
-        public static Uri buildMessageUri(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
 
         public static Uri buildTotalMessageLengthPerUser(String userType) {
             return CONTENT_URI.buildUpon().appendPath(userType).build();

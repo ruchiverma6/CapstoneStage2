@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity implements LoaderManager.Loa
     private void initComponents() {
 
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
-        adapter = new ChatAdapter(ChatActivity.this, new ArrayList<ChatMessage>());
+        adapter = new ChatAdapter(ChatActivity.this);
         messagesContainer.setAdapter(adapter);
 
         mLayoutManager = new LinearLayoutManager(this);

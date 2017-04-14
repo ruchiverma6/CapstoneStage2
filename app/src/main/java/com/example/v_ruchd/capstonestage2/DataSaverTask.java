@@ -88,7 +88,7 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
 
         }
         for (ChatMessage resultData : chatMessages) {
-            ContentValues contentValuesMovies = new ContentValues();
+            ContentValues contentValuesMessages = new ContentValues();
             String messageId = "";
             if (resultData.getFrom().equals(mContext.getString(R.string.user))) {
                 totalMessageLengthForUser += 1;
@@ -97,8 +97,8 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
                 totalMessageLengthForBot += 1;
                 messageId = resultData.getFrom()+":" + totalMessageLengthForBot;
             }
-            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID, messageId);
-            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT, resultData.getMessage());
+            contentValuesMessages.put(NewsContract.MessageEntry.COLUMN_MESSAGE_ID, messageId);
+            contentValuesMessages.put(NewsContract.MessageEntry.COLUMN_MESSAGE_CONTENT, resultData.getMessage());
 
             if(resultData.getMessage().contains(mContext.getString(R.string.input_category))){
                 String data[]=  resultData.getMessage().split(":");
@@ -107,10 +107,10 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
             }
 
 
-            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_DATE, resultData.getDate());
-            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE, resultData.getType());
-            contentValuesMovies.put(NewsContract.MessageEntry.COLUMN_MESSAGE_FROM, resultData.getFrom());
-            contentValuesVector.add(contentValuesMovies);
+            contentValuesMessages.put(NewsContract.MessageEntry.COLUMN_DATE, resultData.getDate());
+            contentValuesMessages.put(NewsContract.MessageEntry.COLUMN_MESSAGE_TYPE, resultData.getType());
+            contentValuesMessages.put(NewsContract.MessageEntry.COLUMN_MESSAGE_FROM, resultData.getFrom());
+            contentValuesVector.add(contentValuesMessages);
 
 
         }
@@ -158,15 +158,15 @@ public class DataSaverTask extends AsyncTask<Void, Void, Void> {
         Vector<ContentValues> contentValuesVector = new Vector<>(articles.size());
 
         for (Articles resultData : articles) {
-            ContentValues contentValuesMovies = new ContentValues();
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID, sourceId);
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_AUTHOR, resultData.getAuthor());
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_TITLE, resultData.getTitle());
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_DESCRIPTION, resultData.getDescription());
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_PUBLISHEDAT, resultData.getPublishedAt());
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_URL, resultData.getUrl());
-            contentValuesMovies.put(NewsContract.ArticleEntry.COLUMN_URL_TO_IMAGE, resultData.getUrlToImage());
-            contentValuesVector.add(contentValuesMovies);
+            ContentValues contentValuesArticles = new ContentValues();
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID, sourceId);
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_AUTHOR, resultData.getAuthor());
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_TITLE, resultData.getTitle());
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_DESCRIPTION, resultData.getDescription());
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_PUBLISHEDAT, resultData.getPublishedAt());
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_URL, resultData.getUrl());
+            contentValuesArticles.put(NewsContract.ArticleEntry.COLUMN_URL_TO_IMAGE, resultData.getUrlToImage());
+            contentValuesVector.add(contentValuesArticles);
 
 
         }

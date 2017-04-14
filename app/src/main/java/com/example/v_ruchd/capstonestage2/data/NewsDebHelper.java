@@ -36,13 +36,13 @@ public class NewsDebHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_CATEGORY_TABLE = "CREATE TABLE " + NewsContract.CategoryEntry.TABLE_NAME + " (" +
 
                 NewsContract.CategoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-
-
                 NewsContract.CategoryEntry.COLUMN_NEWSCHANNEL_KEY + " TEXT NOT NULL, " +
                 NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE + " TEXT NOT NULL, " +
 
                 " FOREIGN KEY (" + NewsContract.CategoryEntry.COLUMN_NEWSCHANNEL_KEY + ") REFERENCES " +
                 NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID + "), " + " UNIQUE (" + NewsContract.CategoryEntry.COLUMN_NEWSCHANNEL_KEY +", "+ NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE+ ") ON CONFLICT REPLACE);";
+
+
 
         final String SQL_CREATE_ARTICLES_TABLE = "CREATE TABLE " + NewsContract.ArticleEntry.TABLE_NAME + " (" +
 
@@ -61,11 +61,6 @@ public class NewsDebHelper extends SQLiteOpenHelper {
 
                 " FOREIGN KEY (" + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + ") REFERENCES " +
                 NewsContract.NewsChannelEntry.TABLE_NAME + " (" + NewsContract.NewsChannelEntry.COLUMN_NEWSCHANNEL_SOURCE_ID + ") , " + " UNIQUE (" + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID +", "+ NewsContract.ArticleEntry.COLUMN_TITLE+ ") ON CONFLICT REPLACE);";
-
-
-
-
-
 
 
 
@@ -96,8 +91,6 @@ public class NewsDebHelper extends SQLiteOpenHelper {
 
 
 
-
-
         sqLiteDatabase.execSQL(SQL_CREATE_NEWSCHANNEL_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_CATEGORY_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_ARTICLES_TABLE);
@@ -113,7 +106,8 @@ public class NewsDebHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.CategoryEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.ArticleEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.MessageEntry.TABLE_NAME);
-
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.MessageCategorySelectionEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NewsContract.TotalMessageLengthEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

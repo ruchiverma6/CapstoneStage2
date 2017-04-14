@@ -31,34 +31,23 @@ public class NewsProvider extends ContentProvider {
     private static final int MESSAGEWITHMESSAGEID = 109;
     private NewsDebHelper mOpenHelper;
 
-    /*static final int MOVIE_WITH_SORT_BY_ID = 102;
-    static final int TRAILER_WITH_MOVIE_ID = 104;
-    static final int REVIEW_WITH_MOVIE_ID = 105;
-    static final int REVIEWS = 106;
-    // static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
-    static final int SORTBY = 300;*/
 
-    private static final String selectionMovieWithSortBy = NewsContract.ArticleEntry.TABLE_NAME + "." + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + " = ? ";
+    private static final String selectionNewsArticlesWithourceChannel = NewsContract.ArticleEntry.TABLE_NAME + "." + NewsContract.ArticleEntry.COLUMN_ARTICLE_SOURCE_CHANNEL_ID + " = ? ";
     private static final String selectionTotalLengthPerUser = NewsContract.TotalMessageLengthEntry.TABLE_NAME + "." + NewsContract.TotalMessageLengthEntry.COLUMN_MESSAGE_FROM + " = ? ";
     private static final String selectionCategoryForMessage = NewsContract.MessageCategorySelectionEntry.TABLE_NAME + "." + NewsContract.MessageCategorySelectionEntry.COLUMN_MESSAGE_ID + " = ? ";
     private static final String selectionCategoryForChannels = NewsContract.CategoryEntry.TABLE_NAME + "." + NewsContract.CategoryEntry.COLUMN_CATEGORY_TYPE + " = ? ";
     private static final String selectionIdForMessage = NewsContract.MessageEntry.TABLE_NAME + "." + NewsContract.MessageEntry.COLUMN_MESSAGE_ID + " = ? ";
 
     static UriMatcher buildUriMatcher() {
-        // I know what you're thinking.  Why create a UriMatcher when you can use regular
-        // expressions instead?  Because you're not crazy, that's why.
 
-        // All paths added to the UriMatcher have a corresponding code to return when a match is
-        // found.  The code passed into the constructor represents the code to return for the root
-        // URI.  It's common to use NO_MATCH as the code for this case.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = NewsContract.CONTENT_AUTHORITY;
 
-        // For each type of URI you want to add, create a corresponding code.
+
         matcher.addURI(authority, NewsContract.PATH_NEWSCHANNEL, NEWSCHANNELS);
         matcher.addURI(authority, NewsContract.PATH_CATEGORY, CATEGORY);
         matcher.addURI(authority, NewsContract.PATH_NEWSCHANNEL + "/*", NEWSCHANNELS_WITH_CATEGORY);
-        //  matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/#", WEATHER_WITH_LOCATION_AND_DATE);
+
 
         matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES, NEWSARTICLES);
         matcher.addURI(authority, NewsContract.PATH_NEWSARTICLES + "/*", NEWSARTICLES_WITH_SOURCECHANNELS);
@@ -69,12 +58,7 @@ public class NewsProvider extends ContentProvider {
         matcher.addURI(authority, NewsContract.PATH_CATEGORY_SELECTION_TYPE + "/*", CATEGORYINPUTSELECTIONMESSAGEID);
         matcher.addURI(authority, NewsContract.PATH_MESSAGES + "/*", MESSAGEWITHMESSAGEID);
 
-//        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_WITH_SORT_BY);
-//        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*/*", MOVIE_WITH_SORT_BY_ID);
-//        matcher.addURI(authority, MovieContract.PATH_TRAILERS, TRAILERS);
-//        matcher.addURI(authority, MovieContract.PATH_TRAILERS + "/*", TRAILER_WITH_MOVIE_ID);
-//        matcher.addURI(authority, MovieContract.PATH_REVIEWS, REVIEWS);
-//        matcher.addURI(authority, MovieContract.PATH_REVIEWS + "/*", REVIEW_WITH_MOVIE_ID);
+
         return matcher;
     }
 
@@ -86,8 +70,7 @@ public class NewsProvider extends ContentProvider {
         sNewsArticleForNewsChannelByQueryBuilder = new SQLiteQueryBuilder();
         sNewsChannelsForNewsCategoryQueryBuilder = new SQLiteQueryBuilder();
 
-        //This is an inner join which looks like
-        //weather INNER JOIN location ON weather.location_id = location._id
+
         sNewsArticleForNewsChannelByQueryBuilder.setTables(
                 NewsContract.NewsChannelEntry.TABLE_NAME + " INNER JOIN " +
                         NewsContract.ArticleEntry.TABLE_NAME +
@@ -116,12 +99,10 @@ public class NewsProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        // Here's the switch statement that, given a URI, will determine what kind of request it is,
-        // and query the database accordingly.
+
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
 
-            // "movie"
             case NEWSCHANNELS: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         NewsContract.NewsChannelEntry.TABLE_NAME,
@@ -147,7 +128,7 @@ public class NewsProvider extends ContentProvider {
                 );
                 break;
             }
-            // "sortby"
+
             case NEWSCHANNELS_WITH_CATEGORY: {
                 retCursor = getNewsChannelsForNewsCategory(uri, projection, sortOrder);
 
@@ -160,14 +141,14 @@ public class NewsProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         NewsContract.ArticleEntry.TABLE_NAME,
                         projection,
-                        selectionMovieWithSortBy,
+                        selectionNewsArticlesWithourceChannel,
                         new String[]{sortBy},
                         null,
                         null,
                         sortOrder
                 );
 
-             //   retCursor = getArticledForNewsChannel(uri, projection, sortOrder);
+
                 break;
             }
 
@@ -253,7 +234,7 @@ public class NewsProvider extends ContentProvider {
 
                 long _id = db.insert(NewsContract.NewsChannelEntry.TABLE_NAME, null, values);
                 if (_id > 0)
-                    returnUri = NewsContract.NewsChannelEntry.buildMovieUri(_id);
+                    returnUri = NewsContract.NewsChannelEntry.buildNewsChannelUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -342,18 +323,6 @@ public class NewsProvider extends ContentProvider {
     }
 
 
-    private Cursor getArticledForNewsChannel(Uri uri, String[] projection, String sortOrder) {
-        String sortBy = uri.getPathSegments().get(1);
-
-        return sNewsArticleForNewsChannelByQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-                projection,
-                selectionMovieWithSortBy,
-                new String[]{sortBy},
-                null,
-                null,
-                sortOrder
-        );
-    }
 
     private Cursor getNewsChannelsForNewsCategory(Uri uri, String[] projection, String sortOrder) {
         String sortBy = uri.getPathSegments().get(1);
