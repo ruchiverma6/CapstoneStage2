@@ -30,9 +30,11 @@
     <string name="politics_category">politics</string>
     <string name="science_nature_category">Science-and-nature</string>
     <string name="sport_category">sport</string>
+    <string name="sports_category">sports</string>
     <string name="technology_category">technology</string>
     <string name="business_category">business</string>
-
+    <string name="nature_category">Nature</string>
+    <string name="science_category">science</string>
     <string name="channelid_for_general_category">abc-news-au</string>
     <string name="channelid_for_entertainment_category">buzzfeed</string>
     <string name="channelid_for_gaming_category">ign</string>
@@ -68,4 +70,5 @@
     <string name="input_category">inputcategory</string>
     <string name="view">View</string>
     <string name="news">News</string>
+    <string name="none">none</string>
 </resources>

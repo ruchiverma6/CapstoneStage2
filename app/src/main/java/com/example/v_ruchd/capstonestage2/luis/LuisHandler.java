@@ -1,6 +1,7 @@
 package com.example.v_ruchd.capstonestage2.luis;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.example.v_ruchd.capstonestage2.Constants;
@@ -52,29 +53,70 @@ public class LuisHandler {
 
 
     public void processResponse(LUISResponse response, final LuisDataUpdateListener luisDataUpdateListener) {
-
+        String[] newsCategoryEnteriesForEntities = context.getResources().getStringArray(R.array.newscategory_msg_enteries);
         LUISIntent topIntent = response.getTopIntent();
         String[] greetingMsgEnteries = context.getResources().getStringArray(R.array.greeting_msg_enteries);
         for (String msg : greetingMsgEnteries) {
             if (topIntent.getName().equalsIgnoreCase(msg)) {
-                String greetingMsg=getGreetingMsg ();
+                String greetingMsg = getGreetingMsg();
                 luisDataUpdateListener.onLuisDataUpdate(greetingMsg, ChatAdapter.TYPE_BOT);
                 return;
             }
 
         }
 
+        for (String msg : newsCategoryEnteriesForEntities) {
+            if (topIntent.getName().equalsIgnoreCase(msg)) {
+                String categoryMessage = topIntent.getName();
+                luisDataUpdateListener.onLuisDataUpdate(categoryMessage, ChatAdapter.TYPE_BOT);
+                return;
+            }
+
+
+        }
+
+
+        List<LUISIntent> intents = response.getIntents();
+
         List<LUISEntity> entities = response.getEntities();
+        for (LUISIntent luisIntent : intents) {
+            for (String msg : newsCategoryEnteriesForEntities) {
+                if (luisIntent.getName().equalsIgnoreCase(msg)) {
+                     String selectedData="";
+                    if (selectedData.equalsIgnoreCase(context.getString(R.string.sports_category))){
+                        selectedData=context.getString(R.string.sport_category);
+                    }else if (selectedData.equalsIgnoreCase(context.getString(R.string.nature_category)) || selectedData.equalsIgnoreCase(context.getString(R.string.science_category)) ){
+                        selectedData=context.getString(R.string.science_nature_category);
+                    }
+                    else {
+                        selectedData = luisIntent.getName();
+                    }
+                        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.input_category) + ":" + selectedData, ChatAdapter.TYPE_NEWS_CATEGORY_RESULT);
 
+                    return;
+                } else if (context.getString(R.string.none).equalsIgnoreCase(luisIntent.getName())) {
+                    if (entities == null || entities.size() == 0) {
+                        luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.select_category_msg), ChatAdapter.TYPE_BOT);
+                        return;
+                    }
 
-        String[] newsCategoryEnteriesForEntities = context.getResources().getStringArray(R.array.newscategory_msg_enteries);
+                }
+            }
+        }
+
 
         for (LUISEntity luisEntity : entities) {
             for (String msg : newsCategoryEnteriesForEntities) {
-                if (Pattern.compile(Pattern.quote(luisEntity.getName()), Pattern.CASE_INSENSITIVE).matcher(msg).find()
+                if (luisEntity.getName().equalsIgnoreCase(msg)
                         ) {
-                    final String selectedData = luisEntity.getName();
-                    luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.input_category)+":" + selectedData, ChatAdapter.TYPE_NEWS_CATEGORY_RESULT);
+                    String selectedData=luisEntity.getName();
+                    if (selectedData.equalsIgnoreCase(context.getString(R.string.sports_category))){
+                        selectedData=context.getString(R.string.sport_category);
+                    }else if (selectedData.equalsIgnoreCase(context.getString(R.string.nature_category)) || selectedData.equalsIgnoreCase(context.getString(R.string.science_category)) ){
+                        selectedData=context.getString(R.string.science_nature_category);
+                    }
+
+                    luisDataUpdateListener.onLuisDataUpdate(context.getString(R.string.input_category) + ":" + selectedData, ChatAdapter.TYPE_NEWS_CATEGORY_RESULT);
 
                     return;
                 }
