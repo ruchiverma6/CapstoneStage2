@@ -34,7 +34,7 @@ android:orientation="vertical">
             android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/chatSendButton"
             android:autoText="true"
-            android:hint="type message" />
+            android:hint="@string/type_msg"/>
 
         <Button
             android:id="@+id/chatSendButton"
@@ -43,7 +43,7 @@ android:orientation="vertical">
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:drawableLeft="@drawable/ic_send_black_24dp"
-
+            android:contentDescription="@string/send_message"
           />
 
         <android.support.v7.widget.RecyclerView
